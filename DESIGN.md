@@ -1,0 +1,73 @@
+# Visual design
+
+## Native Svelte 5 runtime
+
+The complete page is rendered by Svelte components without an iframe, HTML injection, self-bootstrapping public scene scripts or a DOM-copy observer. `BirthdaySketchbookView.svelte` coordinates calendar and scroll state. Separate native components own the hero, clipped text, media book, garden canvases, star field and greeting dialog. The curved leaf chain and magnified copy are Svelte snippets, with index, turning progress, zoom, loupe and video represented by rune state. Graphics and music remain typed, scoped controllers with cleanup. The upstream HTML is preserved only as a byte-identical reference under `docs/reference`; legacy served documents are retired.
+
+## Existing world
+
+Warm paper `#ece7dc`, ink `#2b2721`, secondary ink `#514c43`, earth `#78532f`. Watercolor ground and botanical assets belong to the existing sketchbook. Instrument Serif and Newsreader remain the book's type voices; book turning, video controls, magnifier, descriptions and media remain functional.
+
+## Editorial opening
+
+Experience mode. A 100vh opening uses the same cream and ink, a lowercase Archivo heading, metadata at the edges, a year pill and an outlined plus circle. A rectangular portrait of Sopia sits alongside her name. The lower edge pairs the annual countdown with a short Indonesian dedication and a scroll cue. The book follows immediately.
+
+The supplied dark portrait reference contributes composition and cursor interaction. The user's subsequent instruction preserves the original palette and asks for a combination, so the personal photo is retained and the dark slate theme is not applied. Desktop cursor reveals the portrait's original color through a feathered 110×140px oval over a sepia version. One requestAnimationFrame loop uses 0.22 interpolation and stops below 0.3px delta. Touch remains static; reduced motion snaps the reveal position.
+
+Mobile stacks heading and portrait, retains the countdown and book, and trims secondary metadata to fit the viewport. This opening has no shadows, glass, rounded picture frames, buttons or navigation links. Existing physical book depth remains part of the retained artifact.
+
+November 1 gift refinement: once the portrait loads, a warm paper curtain slides upward over 640ms after an 80ms offset, alongside the existing clipped name. The native Svelte out-transition is local to the photograph and never intercepts input, adds a splash screen or delays the countdown/book. Reduced motion removes the curtain immediately. The existing scroll transform and cursor mask stay independent.
+
+## Notes inside the book
+
+Every left-hand page now has a distinct short Indonesian birthday note, with an italic heading, seven deliberately wrapped lines and a quiet closing sentence. The user subsequently identified himself as Faridz, Sopia's boyfriend, and requested a romantic gift. The ten notes, hero, wishes and letter now speak in his first-person voice and explicitly name/sign Faridz. They express affection, listening, support and birthday wishes without inventing dates, places or shared history. Images and the seven-photo/three-video ordering stay intact.
+
+`src/lib/birthday/memory-notes.json` is the copy source. The native media data uses it for accessible image descriptions; `scripts/update-book-notes.mjs` bakes the same copy into the retained SVG page textures, so words follow the physical curl and appear in the existing magnifier. `npm run book:notes` updates them, and prebuild synchronizes automatically without rewriting unchanged files. No extra per-frame DOM or animation loop is added to the book.
+
+## Romantic Three.js cinema
+
+The user requested all three proposed treatments and a romantic gift from Faridz. The existing editorial/photo/iris sequence now leads into five real photographs mounted on paper-backed planes at different depths. Scroll moves a perspective camera toward the central portrait; the handwritten-scale serif dedication fades as the photographs take over. Peripheral prints leave space for the main heading. Gallery descriptions also remain available as native text for assistive technology.
+
+A second scene presents a real, thick 3D book with a typographic cream cover: "sebuah buku kecil / untuk / sopia. / dari faridz". Its hinged cover opens toward the viewer, with transparent SVG page margins and actual first-spread textures inside. Camera distance compensates for the cover's forward depth, then targets the measured native book bounds. Between 83–94% scroll progress the canvas crossfades into the existing Svelte physical book in the same pinned viewport. Native controls activate at 92%; a visible skip button and index/letter actions can seek directly to this phase and focus the book. Leaving the handoff settles pending page gestures, releasing competing-graphics pauses. Video navigation resets photo tilt/zoom; its play button sits 1px above the paper for reliable 3D hit testing.
+
+Gallery/book stage heights are 200/190svh on desktop and 175/165svh on phones. No wheel/touch interception or scroll replacement is used. The Three.js engine is dynamically imported near the section and renders only on scroll, resize or resource readiness. Native Svelte owns all markup, captions, controls and canvas elements. Separate typed builders own meshes/cameras; a shared resource owner disposes geometries/materials/textures, including late async results. AbortSignal tears down an engine even while its assets/fonts are pending. No shadow maps, postprocessing or idle 3D animation loop. Pixel density caps at 1.35× desktop / 1× phone. Background leaf work yields while a 3D scene is active.
+
+Reduced motion bypasses 3D and presents the static gallery/native book. Import failure, absent WebGL2 and context loss take the same usable fallback. The initial app bundle remains separate from the deferred engine. The production build reports 124.04 kB (46.57 kB gzip) for app JS and 547.54 kB (138.20 kB gzip) for the deferred engine. Vite's 500 kB advisory is retained rather than hidden; the larger chunk is the deliberately lazy Three.js renderer.
+
+## Scroll narrative added from the user's second motion reference
+
+Four pinned moments combine with the birthday site. The opening's portrait moves gently against a lifting, fading name. A personal photograph expands from an inset frame, followed by an outdoor portrait revealed through a circular iris with a difference-blended heading. The interactive book remains between the photographic sequence and five birthday wishes. The wishes light cumulatively beside 220 warm-ink stars arranged on a rotating phyllotaxis spiral.
+
+Desktop stage heights are 130svh for the opening, 170svh for each photographic stage and 150svh for the wishes. Mobile shortens them to 120/150/150/130svh. Supported browsers own the scroll choreography through named CSS view timelines, using each stage's contain range for its pinned span. A rAF-throttled fallback writes variables only on the affected stage, never the page root. Stage geometry is cached and invalidated on resize, font readiness and observed layout changes. Svelte updates only discrete wish counts and visibility states. Metadata uses native Svelte attachments; its 450ms entrance has at most 180ms delay. The original palette, imagery, display fonts, countdown, media book and descriptions remain authoritative. No resort rates, fabricated timestamps, new color theme or generated stock imagery is introduced.
+
+Reduced motion removes sticky scroll distance, parallax and clipping, restores normal heading blending, makes every text and wish visible, and draws a static star field. Default markup also remains readable if the scroll script fails. The existing watercolor supplies texture; a second grain plate is unnecessary.
+
+## Ambient paper garden
+
+The user requested an animated background. The watercolor drifts by a few pixels over 26–32 seconds; the book's botanical assets sway by less than two degrees. Nine low-opacity gold motes rise behind the content, reduced to five on phones. The paper stages are transparent to the same continuous background. Paper and motes use CSS transforms and opacity. Hidden tabs pause the background, and reduced motion restores the original static paper and leaves with no particles.
+
+The user then pointed to the upper-left leaves and requested motion like an After Effects rig. Those leaves originally belonged to the flattened background. Imagegen produced a separate clean paper plate and two transparent watercolor cutouts, optimized into local WebP assets totaling about 331 KiB. Each leaf uses a 12×28 textured WebGL mesh: its stem stays anchored while a continuous wind field bends the tip and adds a small pendulum sway, with independent phases. One shared loop paints both leaves at 30fps, capped at 1.25× desktop and 1× phone pixel density, without an unnecessary preserved drawing buffer or mesh antialiasing. Ambient work pauses during scroll and book turns, while a greeting is open, while hidden or fully covered by a photo. It resumes after 140ms of scroll inactivity; the star field likewise yields during scroll. The original complete artwork remains the fallback for reduced motion, missing assets, unavailable WebGL or a lost graphics context. The physical book and its existing botanical assets are unchanged.
+
+## Letter clip entrance
+
+The user requested a vertical clip slide down, letter by letter. The name and principal story, book and wish headings use individual grapheme clips. Native Svelte in-transitions move each glyph from above over 360ms with cubic ease-out. Stagger is 24ms at most, capped at 260ms across a heading; the surname has a 120ms offset. This avoids an entrance being swallowed before the first paint. Words stay together for wrapping, existing line breaks remain intact, and generous clip insets protect descenders. A single heading label preserves its accessible name while visual glyphs are hidden from assistive technology. An IntersectionObserver triggers entrances once; the frame title waits for its photograph to open. Paragraphs retain a softer 420ms word entrance with a maximum 180ms stagger. Reduced motion shows every letter immediately.
+
+Book turns complete with a finite 280ms ease-out rather than a frame-step spring that lengthens on a busy device. Drag cancellation returns within 180ms; repeated clicks finish the previous turn before starting the next. Native pointer cancellation preserves vertical touch scrolling, and a stale video play rejection cannot alter another page.
+
+## The birthday itself
+
+At 00:00 WIB on November 7, or on the first visit that day, the counter becomes a birthday message and a warm paper envelope appears once per browser session and year. The portrait returns to full color. Its centered typographic monogram and folded paper use the existing cream/earth palette. An explicit button opens the flap, lifts the card and reveals the letter after 420ms. The letter then rises over 300ms alongside its clipped heading and a finite petal fall. Focus moves from the envelope button into the letter; Escape and the close button work throughout, including mid-opening. Timers and music stop on dismissal/unmount, so an interrupted envelope cannot reopen itself.
+
+The letter now offers a romantic Indonesian greeting explicitly from Faridz, as the user requested, without an invented age or relationship history. The envelope bears his initial and the letter signs "Faridz / pacarmu." A music-box rendition of the birthday melody is synthesized locally with Web Audio. Unsealing is silent: music starts only through its explicit play button; it has stop and volume controls, ends after one rendition, and stops when the letter closes, a video plays, or the tab hides. The envelope/letter can be reopened throughout the day and links into the interactive book handoff. On November 8 the page returns to the next annual countdown.
+
+The dialog uses the original cream and earth palette, square edges, no shadow, a complete accessible heading, native focus containment and Escape dismissal. Reduced motion opens the envelope immediately and removes the petals and letter movement. `?preview=birthday` simulates the birthday before the actual date, clearly labels the preview, and uses a separate session key so a preview never marks the real birthday as seen. The normal scene's original countdown remains the fallback when the celebration enhancement is unavailable.
+
+## Day-H wish and photo finale
+
+The user approved the day-H ritual, then explicitly declined a voice message. No voice player or fabricated recording is present. Waiting numerals fold away in 240ms; the new birthday heading enters letter by letter, the portrait returns to color, and the existing envelope opens after a 1.1s introduction. Reduced motion opens immediately. A pending greeting survives a hidden tab and is cancelled on date rollover or manual opening.
+
+After the letter, optional native controls lead to one real Three.js candle. Tapping or keyboard activation extinguishes its flame, raises finite smoke over 850ms and reveals: "Semoga doamu menemukan jalannya. Aku ikut mengaminkannya." No microphone or private wish input. The static/reduced-motion fallback supports the same action. The new mode reuses the deferred renderer, resource owner and AbortSignal cleanup; no idle rendering or new dependency.
+
+The final view assembles seven actual photos around a fine heart outline and reveals Faridz's name like ink. Native Svelte global in-transitions ensure nested photo/key blocks animate on entry/replay. The longest photo arrival is 1.24s; the signature finishes at 1.95s. The composition clips its scatter bounds and uses a smaller desktop arrangement to keep actions visible. All movements end; replay is explicit, and reduced motion shows the completed composition directly.
+
+The greeting maintains native focus containment and Escape/close throughout. Focus enters each ritual view and moves to its next action when the candle is out. Entering ritual views stops the letter's music so a hidden player never keeps sounding. Return-to-letter and direct book actions remain available. Production desktop/mobile checks cover the entire sequence and its native book handoff.

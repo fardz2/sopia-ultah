@@ -1,0 +1,228 @@
+.wish-ritual,
+.birthday-finale {
+  text-align: center;
+}
+.wish-ritual:focus,
+.birthday-finale:focus {
+  outline: none;
+}
+.wish-ritual h2 em,
+.birthday-finale h2 em {
+  font-weight: 400;
+  color: var(--earth);
+}
+.wish-invitation,
+.finale-dedication {
+  margin: 0;
+  color: var(--ink-soft);
+  font: 400 17px/1.5 var(--font);
+}
+.wish-candle-stage {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin: 10px auto;
+}
+.wish-candle-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.wish-candle-stage canvas[hidden] {
+  display: none;
+}
+.wish-candle-static {
+  position: absolute;
+  left: calc(50% - 32px);
+  top: 103px;
+  width: 64px;
+  height: 145px;
+}
+.wish-candle-wax {
+  position: absolute;
+  inset: 0;
+  border-radius: 50% / 7%;
+  background: #e3d2b3;
+  border: 1px solid #bba88b;
+}
+.wish-candle-wax::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 12px;
+  border-radius: 50%;
+  background: #f1e7d5;
+}
+.wish-candle-wick {
+  position: absolute;
+  left: 30px;
+  top: -13px;
+  width: 3px;
+  height: 18px;
+  background: #423328;
+}
+.wish-candle-flame {
+  position: absolute;
+  left: 21px;
+  top: -65px;
+  width: 24px;
+  height: 49px;
+  border-radius: 80% 20% 65% 35%;
+  background: #c68b3d;
+  transform-origin: bottom;
+  opacity: calc(1 - var(--blow-progress, 0) * 2.5);
+  transform: scaleY(max(0.01, calc(1 - var(--blow-progress, 0) * 2.5)));
+}
+.wish-candle-plate {
+  position: absolute;
+  left: -45px;
+  right: -45px;
+  bottom: -5px;
+  height: 12px;
+  border-radius: 50%;
+  background: #bda381;
+}
+.wish-candle-smoke {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: #827666;
+  opacity: clamp(0, calc(var(--blow-progress, 0) * 2 * (1 - var(--blow-progress, 0))), 0.4);
+  transform: translateY(calc(var(--blow-progress, 0) * -24px));
+}
+.is-blown .wish-candle-flame {
+  visibility: hidden;
+}
+.wish-result {
+  max-width: 38ch;
+  min-height: 3em;
+  margin: 0 auto 22px;
+  font: italic 400 20px/1.45 var(--font);
+  color: var(--earth);
+}
+.ritual-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+.finale-heart {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 1 / 0.97;
+  margin: 8px auto 0;
+  overflow: clip;
+}
+.finale-heart-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--earth);
+  opacity: 0.5;
+}
+.finale-heart-line path {
+  stroke-dasharray: 1;
+  animation: heart-line-arrival 1300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.finale-heart img {
+  position: absolute;
+  display: block;
+  width: 23%;
+  height: 29%;
+  object-fit: cover;
+  padding: 5px;
+  background: #f8f4eb;
+}
+.finale-signature {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0;
+  color: var(--earth);
+}
+.finale-signature span {
+  font:
+    400 12px/1.5 Archivo,
+    sans-serif;
+}
+.finale-signature strong {
+  display: block;
+  padding: 0 6px 8px;
+  font: italic 400 62px/1.1 var(--display);
+}
+.finale-replay {
+  min-height: 44px;
+  margin: 10px auto 0;
+  border: 0;
+  padding: 5px 0;
+  color: var(--earth);
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  font:
+    400 12px/1.5 Archivo,
+    sans-serif;
+}
+@keyframes heart-line-arrival {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (min-width: 641px) {
+  .birthday-greeting[data-phase='finale'] {
+    padding: 24px 40px;
+  }
+  .birthday-finale h2 {
+    font-size: 48px;
+    margin-bottom: 14px;
+  }
+  .birthday-finale .finale-heart {
+    width: min(100%, 320px);
+  }
+  .birthday-finale .finale-signature strong {
+    font-size: 48px;
+  }
+  .birthday-finale .ritual-actions {
+    margin-top: 16px;
+  }
+  .birthday-finale .finale-replay {
+    margin-top: 6px;
+  }
+}
+@media (max-width: 640px) {
+  .wish-candle-stage {
+    height: 265px;
+  }
+  .wish-candle-static {
+    top: 85px;
+    height: 135px;
+  }
+  .wish-result {
+    font-size: 18px;
+  }
+  .ritual-actions {
+    gap: 10px;
+  }
+  .ritual-actions .birthday-control {
+    flex: 1;
+    min-width: 130px;
+  }
+  .finale-heart img {
+    padding: 4px;
+  }
+  .finale-signature strong {
+    font-size: 54px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finale-heart-line path {
+    animation: none;
+  }
+}

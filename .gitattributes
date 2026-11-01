@@ -1,0 +1,12 @@
+* text=auto eol=lf
+
+# Keep the canonical upstream reference byte-for-byte intact.
+docs/reference/meng-to-sketchbook-source.html -text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.mp4 binary
+*.woff2 binary
+*.ttf binary

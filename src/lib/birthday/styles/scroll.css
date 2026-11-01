@@ -1,0 +1,570 @@
+/* Scroll is the thread between a portrait, its memories, and a birthday wish. */
+:root {
+  --hero-p: 0;
+  --frame-inset-y: 0%;
+  --frame-inset-x: 0%;
+  --frame-caption: 1;
+  --frame-number: 1;
+  --iris-radius: 78%;
+  --iris-heading: 1;
+  --iris-caption: 1;
+}
+.motion-stage {
+  position: relative;
+  height: auto;
+}
+.story-pin {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--paper);
+}
+.scroll-motion .motion-stage {
+  height: 170svh;
+}
+.scroll-motion .opening-stage {
+  height: 130svh;
+}
+.scroll-motion .wishes-stage {
+  height: 150svh;
+}
+.scroll-motion .story-pin,
+.scroll-motion .opening-stage > .portrait-hero {
+  position: sticky;
+  top: 0;
+}
+.scroll-motion .portrait-title {
+  transform: translate3d(0, calc(var(--hero-p) * -60px), 0);
+  opacity: calc(1 - var(--hero-p));
+}
+.scroll-motion .portrait-visual {
+  transform: translate3d(0, calc(var(--hero-p) * -40px), 0) scale(calc(1 + var(--hero-p) * 0.06));
+}
+.story-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.frame-photo {
+  clip-path: inset(var(--frame-inset-y) var(--frame-inset-x));
+  transform: translateZ(0);
+}
+.frame-date {
+  position: absolute;
+  top: 40px;
+  right: 64px;
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  color: var(--ink);
+  opacity: var(--frame-number);
+  pointer-events: none;
+}
+.frame-date strong {
+  font: 400 clamp(100px, 18vw, 240px)/0.9 var(--display);
+  letter-spacing: -0.03em;
+}
+.frame-date span {
+  font:
+    400 12px/1.4 Archivo,
+    sans-serif;
+  letter-spacing: 0.12em;
+}
+.story-scrim {
+  position: absolute;
+  inset: 44% 0 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(43, 39, 33, 0), rgba(43, 39, 33, 0.92));
+  opacity: var(--frame-caption);
+}
+#frameStage .story-scrim {
+  inset: 0;
+  background: linear-gradient(180deg, rgba(43, 39, 33, 0) 44%, rgba(43, 39, 33, 0.92));
+  clip-path: inset(var(--frame-inset-y) var(--frame-inset-x));
+}
+.frame-caption {
+  position: absolute;
+  left: 64px;
+  right: 64px;
+  bottom: 48px;
+  color: #f0f0ee;
+  opacity: var(--frame-caption);
+  transform: translateY(calc((1 - var(--frame-caption)) * 24px));
+}
+.frame-caption h2 {
+  margin: 0 0 16px;
+  max-width: 15ch;
+  font: 400 clamp(42px, 6vw, 80px)/1.03 var(--display);
+  letter-spacing: -0.015em;
+}
+.frame-caption p {
+  margin: 0;
+  max-width: 45ch;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.iris-photo {
+  object-position: 50% 58%;
+  clip-path: circle(var(--iris-radius) at 50% 50%);
+  transform: translateZ(0);
+}
+.iris-heading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  margin: 0;
+  padding: 32px;
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: var(--iris-heading);
+  font: 400 clamp(60px, 8vw, 112px)/1.02 var(--display);
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+.iris-heading > span {
+  display: block;
+}
+.iris-scrim {
+  inset: 65% 0 0;
+  opacity: var(--iris-caption);
+}
+.iris-captions {
+  position: absolute;
+  left: 64px;
+  right: 64px;
+  bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  color: #f0f0ee;
+  opacity: var(--iris-caption);
+  font:
+    400 12px/1.5 Archivo,
+    sans-serif;
+  letter-spacing: 0.04em;
+}
+.wish-pin {
+  display: grid;
+  align-items: center;
+}
+.wish-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
+  width: min(calc(100% - 96px), 1120px);
+  margin: auto;
+}
+.wish-copy h2 {
+  margin: 0 0 32px;
+  font: 400 clamp(42px, 5vw, 68px)/1.05 var(--display);
+  letter-spacing: -0.015em;
+}
+.wish-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+}
+.wish-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 16px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--hairline);
+  transition: opacity 0.2s ease-out;
+}
+.scroll-motion .wish-row {
+  opacity: 0.3;
+}
+.scroll-motion .wish-row.is-lit {
+  opacity: 1;
+}
+.wish-time {
+  padding-top: 5px;
+  font:
+    400 11px/1.4 Archivo,
+    sans-serif;
+  letter-spacing: 0.05em;
+  color: #6a6359;
+}
+.wish-row strong {
+  display: block;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 400;
+}
+.wish-row p {
+  margin: 4px 0 0;
+  color: #514c43;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.wish-sky {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  justify-self: center;
+  margin: 0;
+}
+.wish-sky canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.wish-sky figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 16px;
+  color: #6a6359;
+  font:
+    400 11px/1.5 Archivo,
+    sans-serif;
+}
+
+/* Failed scripts leave readable content. Reveals are enabled only after setup. */
+.text-line {
+  display: block;
+}
+.letter-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.letter-clip {
+  display: inline-block;
+  vertical-align: top;
+  clip-path: inset(-0.08em -0.035em -0.12em -0.035em);
+}
+.letter-glyph {
+  display: block;
+}
+.motion-word {
+  display: inline-block;
+}
+.motion-ready [data-reveal] {
+  opacity: 0.3;
+  transform: translateY(14px);
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--d, 0s);
+}
+.motion-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Browser-owned scroll timelines avoid per-frame Svelte updates and inherited
+   root variables. Each long stage's contain range is exactly its pinned span. */
+.native-scroll .opening-stage {
+  view-timeline: --opening block;
+}
+.native-scroll #frameStage {
+  view-timeline: --frame block;
+}
+.native-scroll #irisStage {
+  view-timeline: --iris block;
+}
+.native-scroll .portrait-title {
+  animation: opening-title auto linear both;
+  animation-timeline: --opening;
+  animation-range: contain;
+}
+.native-scroll .portrait-visual {
+  animation: opening-photo auto linear both;
+  animation-timeline: --opening;
+  animation-range: contain;
+}
+.native-scroll .frame-photo {
+  animation: frame-open auto linear both;
+  animation-timeline: --frame;
+  animation-range: contain;
+}
+.native-scroll #frameStage .story-scrim {
+  animation:
+    frame-open auto linear both,
+    caption-light auto linear both;
+  animation-timeline: --frame, --frame;
+  animation-range:
+    contain,
+    contain 55% contain 85%;
+}
+.native-scroll .frame-date {
+  animation: frame-date auto linear both;
+  animation-timeline: --frame;
+  animation-range: contain;
+}
+.native-scroll .frame-caption {
+  animation: frame-caption auto linear both;
+  animation-timeline: --frame;
+  animation-range: contain 55% contain 85%;
+}
+.native-scroll .iris-photo {
+  animation: iris-open auto linear both;
+  animation-timeline: --iris;
+  animation-range: contain;
+}
+.native-scroll .iris-heading {
+  animation: iris-heading auto linear both;
+  animation-timeline: --iris;
+  animation-range: contain 60% contain 95%;
+}
+.native-scroll .iris-captions,
+.native-scroll .iris-scrim {
+  animation: caption-light auto linear both;
+  animation-timeline: --iris;
+  animation-range: contain 50% contain 80%;
+}
+@keyframes opening-title {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, -60px, 0);
+    opacity: 0;
+  }
+}
+@keyframes opening-photo {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(0, -40px, 0) scale(1.06);
+  }
+}
+@keyframes frame-open {
+  from {
+    clip-path: inset(34% 30%);
+  }
+  to {
+    clip-path: inset(0% 0%);
+  }
+}
+@keyframes frame-date {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes caption-light {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes frame-caption {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes iris-open {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(78% at 50% 50%);
+  }
+}
+@keyframes iris-heading {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .scroll-motion .motion-stage {
+    height: 150svh;
+  }
+  .scroll-motion .opening-stage {
+    height: 120svh;
+  }
+  .scroll-motion .wishes-stage {
+    height: 130svh;
+  }
+  .frame-date {
+    top: 28px;
+    right: 24px;
+  }
+  .frame-caption {
+    left: 24px;
+    right: 24px;
+    bottom: 32px;
+  }
+  .frame-caption h2 {
+    font-size: clamp(40px, 10vw, 64px);
+  }
+  .frame-caption p {
+    font-size: 17px;
+    max-width: 32ch;
+  }
+  .frame-photo {
+    object-position: 48% 50%;
+  }
+  .iris-heading {
+    font-size: clamp(48px, 12vw, 80px);
+    padding: 22px;
+  }
+  .iris-captions {
+    left: 24px;
+    right: 24px;
+    bottom: 28px;
+    font-size: 11px;
+    gap: 18px;
+  }
+  .wish-layout {
+    width: calc(100% - 44px);
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 32px 0;
+  }
+  .wish-copy h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  .wish-row {
+    padding: 11px 0;
+    gap: 14px;
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .wish-row strong {
+    font-size: 20px;
+  }
+  .wish-row p {
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .wish-sky {
+    width: min(48vw, 220px);
+  }
+  .wish-sky figcaption {
+    margin-top: 4px;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .wish-sky figcaption span:last-child {
+    display: none;
+  }
+}
+@media (max-height: 650px) and (min-width: 761px) {
+  .wish-layout {
+    padding-block: 24px;
+    gap: 36px;
+  }
+  .wish-copy h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  .wish-row {
+    padding-block: 11px;
+  }
+  .wish-row p {
+    font-size: 14px;
+  }
+  .wish-sky {
+    max-width: 340px;
+  }
+}
+@media (max-height: 700px) and (max-width: 760px) {
+  .wish-layout {
+    position: relative;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-block: 24px;
+  }
+  .wish-copy h2 {
+    font-size: 34px;
+    max-width: calc(100% - 85px);
+  }
+  .wish-row {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 8px;
+    padding-block: 10px;
+  }
+  .wish-row strong {
+    font-size: 18px;
+  }
+  .wish-row p {
+    font-size: 13px;
+  }
+  .wish-sky {
+    position: absolute;
+    right: 0;
+    top: 24px;
+    width: 75px;
+  }
+  .wish-sky figcaption {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-stage,
+  .scroll-motion .motion-stage {
+    height: auto;
+  }
+  .story-pin,
+  .scroll-motion .story-pin,
+  .scroll-motion .opening-stage > .portrait-hero {
+    position: relative;
+  }
+  .scroll-motion .portrait-title,
+  .scroll-motion .portrait-visual {
+    transform: none;
+    opacity: 1;
+  }
+  .frame-photo,
+  .iris-photo,
+  #frameStage .story-scrim {
+    clip-path: none;
+  }
+  .frame-caption,
+  .frame-date,
+  .story-scrim,
+  .iris-captions,
+  .scroll-motion .wish-row {
+    opacity: 1;
+    transform: none;
+  }
+  .iris-heading {
+    inset: 0 0 auto;
+    display: block;
+    padding: 24px;
+    background: var(--paper);
+    color: var(--ink);
+    mix-blend-mode: normal;
+    opacity: 1;
+    font-size: clamp(36px, 5vw, 60px);
+  }
+  .motion-ready [data-words] .motion-word,
+  .motion-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .motion-ready [data-letters] .letter-glyph {
+    transform: none !important;
+    transition: none;
+  }
+}

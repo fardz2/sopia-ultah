@@ -1,0 +1,167 @@
+/* A little air through the paper garden; photographs remain in front. */
+.wash {
+  inset: -3%;
+  transform-origin: 50% 50%;
+  animation: paper-garden-drift 26s ease-in-out infinite alternate;
+}
+.leaf-rig-ready .wash {
+  background-image: url(/landing-pages/birthday-media/paper-clean.webp);
+}
+.leaf-canopy {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+  mix-blend-mode: multiply;
+}
+.leaf-rig-ready .leaf-canopy {
+  opacity: 0.56;
+}
+.leaf-canvas {
+  position: absolute;
+  display: block;
+  height: auto;
+  aspect-ratio: 1;
+}
+.leaf-canvas--monstera {
+  width: clamp(340px, 30vw, 520px);
+  left: clamp(-145px, -7vw, -85px);
+  top: clamp(-140px, -8vw, -95px);
+}
+.leaf-canvas--fern {
+  width: clamp(300px, 27vw, 470px);
+  left: clamp(90px, 9vw, 200px);
+  top: clamp(-130px, -8vw, -90px);
+}
+.ambient-garden {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.ambient-speck {
+  position: absolute;
+  left: var(--x);
+  bottom: -12px;
+  display: block;
+  width: var(--size, 4px);
+  height: var(--size, 4px);
+  border-radius: 50%;
+  background: #a87b48;
+  opacity: 0;
+  animation: paper-mote-rise var(--duration, 24s) linear var(--delay, 0s) infinite;
+}
+.botany.l {
+  transform-origin: 40% 96%;
+  animation: garden-leaf-left 11s ease-in-out -3s infinite alternate;
+  animation-play-state: paused;
+}
+.botany.r {
+  transform-origin: 65% 96%;
+  animation: garden-leaf-right 14s ease-in-out -8s infinite alternate;
+  animation-play-state: paused;
+}
+.botany.is-swaying {
+  animation-play-state: running;
+}
+.story-pin {
+  background: transparent;
+}
+
+@keyframes paper-garden-drift {
+  from {
+    transform: translate3d(-9px, -6px, 0) rotate(-0.15deg);
+  }
+  to {
+    transform: translate3d(12px, 10px, 0) rotate(0.15deg);
+  }
+}
+@keyframes paper-mote-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.8);
+  }
+  15% {
+    opacity: 0.22;
+  }
+  75% {
+    opacity: 0.16;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 24px), -110vh, 0) scale(1.05);
+  }
+}
+@keyframes garden-leaf-left {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.7deg);
+  }
+}
+@keyframes garden-leaf-right {
+  from {
+    transform: rotate(1.4deg);
+  }
+  to {
+    transform: rotate(-1.5deg);
+  }
+}
+
+.background-paused .wash,
+.background-paused .ambient-speck,
+.background-paused .botany {
+  animation-play-state: paused;
+}
+.canopy-covered .wash,
+.canopy-covered .ambient-speck {
+  animation-play-state: paused;
+}
+@media (max-width: 640px) {
+  .ambient-speck:nth-child(n + 6) {
+    display: none;
+  }
+  .wash {
+    animation-duration: 32s;
+  }
+  .leaf-rig-ready .leaf-canopy {
+    opacity: 0.38;
+  }
+  .leaf-canvas--monstera {
+    width: 260px;
+    left: -125px;
+    top: -105px;
+  }
+  .leaf-canvas--fern {
+    width: 245px;
+    left: 25px;
+    top: -100px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wash {
+    inset: 0;
+    animation: none;
+    transform: none;
+  }
+  .ambient-garden {
+    display: none;
+  }
+  .leaf-canopy {
+    display: none;
+    transition: none;
+  }
+  .ambient-speck,
+  .botany.l,
+  .botany.r {
+    animation: none;
+    transform: none;
+  }
+}
