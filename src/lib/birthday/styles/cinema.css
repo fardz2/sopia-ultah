@@ -250,6 +250,27 @@
   color: var(--earth);
   font: italic 400 36px/1.2 var(--display);
 }
+/* The teaser always keeps its cover shut, including reduced-motion/WebGL fallback. */
+.cinema-stage.is-locked {
+  height: 100svh;
+  min-height: 620px;
+}
+.is-locked .cinema-pin {
+  height: 100%;
+  min-height: 620px;
+  padding: 0;
+}
+.is-locked .cinema-copy,
+.is-static.is-locked .cinema-copy {
+  display: block;
+  position: absolute;
+  top: 8%;
+  left: clamp(24px, 5vw, 72px);
+  margin: 0;
+}
+.is-locked .cinema-edge-note {
+  display: flex;
+}
 @media (max-width: 640px) {
   .cinema-stage {
     height: 175svh;

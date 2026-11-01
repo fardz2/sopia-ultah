@@ -4,11 +4,16 @@ const formatter = new Intl.DateTimeFormat('en-US', {
   month: 'numeric',
   day: 'numeric',
 });
+// This gift opens once, on 7 November 2026 at 00.00 WIB. The countdown
+// remains annual, but the keepsake never locks again after its release.
+export const GIFT_RELEASE_AT = Date.UTC(2026, 10, 6, 17);
+
 export function birthdayState(now: number, preview = false) {
   const parts = Object.fromEntries(
     formatter.formatToParts(new Date(now)).map((part) => [part.type, Number(part.value)]),
   );
-  const today = preview || (parts.month === 11 && parts.day === 7);
+  const unlocked = preview || now >= GIFT_RELEASE_AT;
+  const today = preview || (unlocked && parts.month === 11 && parts.day === 7);
   const nextYear = parts.year + (parts.month > 11 || (parts.month === 11 && parts.day > 7) ? 1 : 0);
   let remaining = Math.max(0, Math.floor((Date.UTC(nextYear, 10, 7) - 7 * 3600000 - now) / 1000));
   const days = Math.floor(remaining / 86400);
@@ -19,6 +24,7 @@ export function birthdayState(now: number, preview = false) {
     seconds = remaining - minutes * 60;
   return {
     today,
+    unlocked,
     preview,
     year: parts.year,
     days,

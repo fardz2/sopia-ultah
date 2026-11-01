@@ -80,7 +80,9 @@
 <svelte:window onresize={reset} onpagehide={reset} />
 <section class="portrait-hero" id="portraitHero" bind:this={hero} aria-labelledby="portraitTitle">
   <header class="portrait-topline">
-    <div class="portrait-meta" {@attach reveal()}><span>sopia</span><span>arsip kenangan</span></div>
+    <div class="portrait-meta" {@attach reveal()}>
+      <span>sopia</span><span>{day.unlocked ? 'arsip kenangan' : 'sebuah kejutan'}</span>
+    </div>
     <span class="portrait-year" {@attach reveal()}>f / s</span>
     <div class="portrait-date-meta" {@attach reveal(0.055)}>
       <span>(</span><span>07 november</span><span>/</span><span>setiap tahun</span><span>)</span>
@@ -180,14 +182,14 @@
             <span>selamat ulang tahun, sopia.</span>
           </div>{/if}
       </div>
-      {#if day.today}<div class="birthday-actions" id="birthdayActions">
+      {#if day.unlocked}<div class="birthday-actions" id="birthdayActions">
           <button
             type="button"
             class="birthday-open"
             id="birthdayOpen"
             aria-haspopup="dialog"
             aria-controls="birthdayGreeting"
-            onclick={onopen}>buka ucapan untukmu</button
+            onclick={onopen}>{day.today ? 'buka ucapan untukmu' : 'buka lagi surat dariku'}</button
           >
         </div>{/if}
     </div>
@@ -196,7 +198,9 @@
         as="p"
         className="portrait-note"
         mode="words"
-        text="untuk kamu, yang ingin aku rayakan lebih dari setiap 7 november. aku kumpulkan foto, potongan waktu, dan sedikit dari banyaknya rasa sayangku di sini. selamat datang di hadiah kecilmu, sopia."
+        text={day.unlocked
+          ? 'untuk kamu, yang ingin aku rayakan lebih dari setiap 7 november. aku kumpulkan foto, potongan waktu, dan sedikit dari banyaknya rasa sayangku di sini. selamat datang di hadiah kecilmu, sopia.'
+          : 'ada sesuatu yang sedang aku siapkan untukmu. tunggu sebentar lagi, sayang.'}
         {reduced}
       />
       <div class="portrait-endline">

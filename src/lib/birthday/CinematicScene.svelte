@@ -6,6 +6,7 @@
   let {
     mode,
     id,
+    locked = false,
     reduced = false,
     paused = false,
     onactive,
@@ -13,6 +14,7 @@
   }: {
     mode: Exclude<CinemaMode, 'candle'>;
     id: string;
+    locked?: boolean;
     reduced?: boolean;
     paused?: boolean;
     onactive?: (active: boolean) => void;
@@ -21,7 +23,7 @@
   let section: HTMLElement, canvas: HTMLCanvasElement;
   let status = $state<'idle' | 'loading' | 'ready' | 'fallback'>('idle');
   let arrived = $state(false);
-  const interactive = $derived(reduced || status === 'fallback' || arrived);
+  const interactive = $derived(!locked && (reduced || status === 'fallback' || arrived));
   let driver: CinemaDriver | undefined;
   const lifetime = new AbortController();
   let focusRequested = false;
@@ -69,7 +71,9 @@
     if (destroyed || !mounted) return;
     const rect = section.getBoundingClientRect();
     const visible = rect.top < innerHeight && rect.bottom > 0;
-    currentProgress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
+    currentProgress = locked
+      ? 0
+      : Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
     arrived = currentProgress >= 0.92;
     section.style.setProperty('--cinema-copy', String(1 - range(currentProgress, 0.12, 0.4)));
     section.style.setProperty(
@@ -105,7 +109,7 @@
     }
   }
   export function seekBook(animate = true) {
-    if (!section) return;
+    if (!section || locked) return;
     focusRequested = true;
     const top =
       section.getBoundingClientRect().top + scrollY + Math.max(0, section.offsetHeight - innerHeight);
@@ -168,6 +172,7 @@
   class="cinema-stage cinema-{mode}"
   class:is-static={reduced || status === 'fallback'}
   class:is-interactive={interactive}
+  class:is-locked={locked}
   data-cinema-state={status}
   aria-label={mode === 'book'
     ? 'Buku untuk Sopia, dari Faridz'
@@ -203,16 +208,19 @@
       {#if mode === 'gallery'}
         <h2>dari semua<br />hal indah,<br /><em>kamu.</em></h2>
         <p>yang ingin aku rayakan.<br />yang ingin aku bahagiakan.</p>
+      {:else if locked}
+        <h2>belum saatnya.<br /><em>sebentar lagi, ya.</em></h2>
+        <p>buku ini menunggumu.<br />terbuka pada 7 november, pukul 00.00 wib.</p>
       {:else}
         <h2>sedikit cerita.<br /><em>banyak rasa.</em></h2>
         <p>aku simpan di antara halaman,<br />supaya bisa kamu buka kapan pun.</p>
       {/if}
     </div>
-    <div class="cinema-end-copy" aria-hidden="true">
+    {#if !locked}<div class="cinema-end-copy" aria-hidden="true">
       <p>{mode === 'gallery' ? 'aku sayang kamu, sopia.' : 'sepuluh halaman. satu hati untukmu.'}</p>
       <span>dari faridz</span>
-    </div>
-    {#if mode === 'book' && children}
+    </div>{/if}
+    {#if mode === 'book' && children && !locked}
       <button
         class="cinema-skip"
         type="button"
@@ -226,7 +234,7 @@
     {/if}
     <div class="cinema-edge-note" aria-hidden="true">
       <span>{mode === 'gallery' ? 'potongan waktu, rasa sayangku.' : 'untuk sopia, dari pacarmu.'}</span><span
-        >lanjutkan menggulir ↓</span
+        >{locked ? 'sampai waktunya tiba.' : 'lanjutkan menggulir ↓'}</span
       >
     </div>
   </div>

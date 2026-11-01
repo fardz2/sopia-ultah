@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "book:notes": "node scripts/update-book-notes.mjs",
+    "test:date": "node scripts/check-birthday-date.mjs",
     "prebuild": "node scripts/update-book-notes.mjs",
     "build": "vite build",
     "preview": "vite preview"

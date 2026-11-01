@@ -31,15 +31,18 @@
     galleryActive = $state(false),
     cinemaBookActive = $state(false);
   let root: HTMLDivElement;
-  let bookScene: { seekBook(animate?: boolean): void };
-  let openingStage: HTMLDivElement, frameStage: HTMLElement, irisStage: HTMLElement, wishesStage: HTMLElement;
+  let bookScene = $state<{ seekBook(animate?: boolean): void }>();
+  // Attachments register only the stages currently mounted. Gifts are absent
+  // before release, and can appear while this tab is already open at midnight.
+  const stageElements: (HTMLElement | undefined)[] = [];
+  let resizeObserver: ResizeObserver | undefined;
   let scene = $state.raw({ wishesLit: 0, wishesVisible: false, covered: false });
   let scrollFrame = 0,
     clockTimer = 0,
     greetingTimer = 0,
     scrollTimer = 0,
     layoutDirty = true;
-  let stages: { element: HTMLElement; top: number; height: number }[] = [];
+  let stages: ({ element: HTMLElement; top: number; height: number } | undefined)[] = [];
   const written = new WeakMap<HTMLElement, Map<string, string>>();
   const day = $derived(birthdayState(now, preview));
   const seen = new Set<string>();
@@ -65,6 +68,7 @@
     }
   }
   function openGreeting() {
+    if (!day.unlocked) return;
     clearTimeout(greetingTimer);
     greetingTimer = 0;
     pendingGreetingYear = undefined;
@@ -87,8 +91,8 @@
     clearTimeout(clockTimer);
     now = Date.now();
     const current = birthdayState(now, preview);
+    if (!current.unlocked) greetingOpen = false;
     if (!current.today) {
-      greetingOpen = false;
       pendingGreetingYear = undefined;
       clearTimeout(greetingTimer);
       greetingTimer = 0;
@@ -110,17 +114,25 @@
   }
   function readScroll() {
     scrollFrame = 0;
-    if (!openingStage || hidden) return;
+    if (!stageElements[0] || hidden) return;
     const y = scrollY,
       viewport = innerHeight;
     if (layoutDirty) {
-      stages = [openingStage, frameStage, irisStage, wishesStage].map((element) => {
+      stages = stageElements.map((element) => {
+        if (!element) return;
         const rect = element.getBoundingClientRect();
         return { element, top: rect.top + y, height: rect.height };
       });
       layoutDirty = false;
     }
-    const progress = (i: number) => clamp((y - stages[i].top) / Math.max(1, stages[i].height - viewport));
+    const progress = (i: number) => {
+      const stage = stages[i];
+      return stage ? clamp((y - stage.top) / Math.max(1, stage.height - viewport)) : 0;
+    };
+    const coversViewport = (i: number) => {
+      const stage = stages[i];
+      return !!stage && stage.top <= y && stage.top + stage.height >= y + viewport;
+    };
     const hero = reduced ? 0 : progress(0),
       frame = reduced ? 1 : progress(1),
       iris = reduced ? 1 : progress(2),
@@ -128,11 +140,10 @@
     if (frame > 0.55) frameRevealed = true;
     const next = {
       wishesLit: Math.floor(w * 5),
-      wishesVisible: stages[3].top < y + viewport && stages[3].top + stages[3].height > y,
+      wishesVisible: !!stages[3] && stages[3].top < y + viewport && stages[3].top + stages[3].height > y,
       covered:
         !reduced &&
-        ((frame > 0.999 && stages[1].top <= y && stages[1].top + stages[1].height >= y + viewport) ||
-          (iris > 0.96 && stages[2].top <= y && stages[2].top + stages[2].height >= y + viewport)),
+        ((frame > 0.999 && coversViewport(1)) || (iris > 0.96 && coversViewport(2))),
     };
     if (
       next.wishesLit !== scene.wishesLit ||
@@ -143,21 +154,22 @@
     // Older browsers retain the same choreography. Variables stay on their own
     // stage, so a scroll frame never invalidates the book or the entire page.
     if (!nativeScroll) {
-      writeStage(openingStage, { '--hero-p': hero });
-      writeStage(frameStage, {
+      writeStage(stageElements[0], { '--hero-p': hero });
+      writeStage(stageElements[1], {
         '--frame-inset-y': `${34 * (1 - frame)}%`,
         '--frame-inset-x': `${30 * (1 - frame)}%`,
         '--frame-caption': range(frame, 0.55, 0.85),
         '--frame-number': 0.25 + frame * 0.75,
       });
-      writeStage(irisStage, {
+      writeStage(stageElements[2], {
         '--iris-radius': `${iris * 78}%`,
         '--iris-heading': 1 - range(iris, 0.6, 0.95),
         '--iris-caption': range(iris, 0.5, 0.8),
       });
     }
   }
-  function writeStage(element: HTMLElement, values: Record<string, string | number>) {
+  function writeStage(element: HTMLElement | undefined, values: Record<string, string | number>) {
+    if (!element) return;
     let previous = written.get(element);
     if (!previous) {
       previous = new Map();
@@ -171,7 +183,7 @@
     }
   }
   function schedule() {
-    if (!scrollFrame && !hidden) scrollFrame = requestAnimationFrame(readScroll);
+    if (!scrollFrame && !hidden && ready) scrollFrame = requestAnimationFrame(readScroll);
   }
   function scrolled() {
     if (!reduced) {
@@ -185,7 +197,20 @@
     layoutDirty = true;
     schedule();
   }
+  function trackStage(index: number) {
+    return (element: HTMLElement) => {
+      stageElements[index] = element;
+      resizeObserver?.observe(element);
+      invalidateLayout();
+      return () => {
+        resizeObserver?.unobserve(element);
+        stageElements[index] = undefined;
+        invalidateLayout();
+      };
+    };
+  }
   function bookTo(index?: number) {
+    if (!day.unlocked) return;
     if (index !== undefined) pageIndex = index;
     bookScene?.seekBook(!reduced);
   }
@@ -205,21 +230,24 @@
       invalidateLayout();
     };
     media.addEventListener('change', changed);
-    const resize = new ResizeObserver(invalidateLayout);
-    resize.observe(root);
-    [openingStage, frameStage, irisStage, wishesStage].forEach((element) => resize.observe(element));
+    resizeObserver = new ResizeObserver(invalidateLayout);
+    resizeObserver.observe(root);
+    stageElements.forEach((element) => {
+      if (element) resizeObserver?.observe(element);
+    });
     document.fonts.ready.then(() => {
       if (ready) invalidateLayout();
     });
+    ready = true;
     updateClock();
     schedule();
-    ready = true;
     return () => {
       clearTimeout(clockTimer);
       clearTimeout(greetingTimer);
       clearTimeout(scrollTimer);
       cancelAnimationFrame(scrollFrame);
-      resize.disconnect();
+      resizeObserver?.disconnect();
+      resizeObserver = undefined;
       media.removeEventListener('change', changed);
       ready = false;
     };
@@ -227,9 +255,11 @@
 </script>
 
 <svelte:head
-  ><title>Untuk Sopia, dari Faridz — Selamat Ulang Tahun</title><meta
+  ><title>{day.unlocked ? 'Untuk Sopia, dari Faridz — Selamat Ulang Tahun' : 'Untuk Sopia — Sebuah Kejutan dari Faridz'}</title><meta
     name="description"
-    content="Hadiah ulang tahun untuk Sopia Nurfitria, dari Faridz. Cerita kecil, foto, video, dan banyak rasa sayang, setiap 7 November."
+    content={day.unlocked
+      ? 'Hadiah ulang tahun untuk Sopia Nurfitria, dari Faridz. Cerita kecil, foto, video, dan banyak rasa sayang, setiap 7 November.'
+      : 'Sebuah kejutan untuk Sopia, dari Faridz. Menunggu tanggal 7 November, pukul 00.00 WIB.'}
   /></svelte:head
 >
 <svelte:window
@@ -270,6 +300,7 @@
   data-native="svelte5"
   data-ready={ready ? '1' : '0'}
   data-birthday-state={day.today ? 'today' : 'waiting'}
+  data-gift-state={day.unlocked ? (day.today ? 'birthday' : 'keepsake') : 'locked'}
   data-birthday-year={day.year}
   data-birthday-preview={preview}
   {style}
@@ -286,10 +317,11 @@
     onready={(value) => (leafReady = value)}
   />
   <main class="page home">
-    <div class="motion-stage opening-stage" id="openingStage" bind:this={openingStage}>
+    <div class="motion-stage opening-stage" id="openingStage" {@attach trackStage(0)}>
       <BirthdayHero {day} {reduced} paused={hidden} onopen={openGreeting} />
     </div>
-    <section class="motion-stage" id="frameStage" bind:this={frameStage} aria-labelledby="frameTitle">
+    {#if day.unlocked}
+    <section class="motion-stage" id="frameStage" {@attach trackStage(1)} aria-labelledby="frameTitle">
       <div class="story-pin">
         <img
           class="story-photo frame-photo"
@@ -320,7 +352,7 @@
         </div>
       </div>
     </section>
-    <section class="motion-stage" id="irisStage" bind:this={irisStage} aria-labelledby="irisTitle">
+    <section class="motion-stage" id="irisStage" {@attach trackStage(2)} aria-labelledby="irisTitle">
       <div class="story-pin">
         <img
           class="story-photo iris-photo"
@@ -375,7 +407,7 @@
     <section
       class="motion-stage wishes-stage"
       id="wishesStage"
-      bind:this={wishesStage}
+      {@attach trackStage(3)}
       aria-labelledby="wishTitle"
     >
       <div class="story-pin wish-pin">
@@ -433,8 +465,13 @@
     <p class="foot" id="contact" {@attach reveal()}>
       Untuk Sopia Nurfitria · dibuat dengan sayang oleh <a href="#about" class="bio-link">Faridz, pacarmu</a>.
     </p>
+    {:else}
+      <CinematicScene mode="book" id="giftTeaser" locked {reduced} paused={hidden} />
+    {/if}
   </main>
-  <CelebrationDialog bind:open={greetingOpen} {reduced} {hidden} {preview} onbook={() => bookTo()} />
+  {#if day.unlocked}
+    <CelebrationDialog bind:open={greetingOpen} {reduced} {hidden} {preview} onbook={() => bookTo()} />
+  {/if}
 </div>
 
 <style>

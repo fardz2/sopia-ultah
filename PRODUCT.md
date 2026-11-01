@@ -8,7 +8,7 @@ web
 
 ## Product Purpose
 
-Website ulang tahun pribadi untuk Sopia Nurfitria, dirayakan setiap 7 November. Pengunjung melihat hitung mundur dan menjelajahi foto serta video melalui buku interaktif.
+Website ulang tahun pribadi untuk Sopia Nurfitria, dirayakan setiap 7 November. Sebelum hadiah dirilis, pengunjung melihat hitung mundur dan buku tertutup. Setelahnya, foto serta video dapat dijelajahi melalui buku interaktif.
 
 Hadiah romantis dari Faridz, pacar Sopia. Hubungan dan nama pengirim diberikan langsung oleh pengguna pada 1 November 2026. Ucapan memakai suara Faridz, dengan tanda tangan yang jelas, tanpa mengarang riwayat hubungan atau tanggal khusus.
 
@@ -19,6 +19,8 @@ Sopia dan orang yang membagikan hadiah ulang tahun ini, melalui desktop atau pon
 ## Capabilities and Constraints
 
 - Hitung mundur tahunan menuju 7 November pukul 00.00 WIB.
+- Hadiah pertama terbuka pada 7 November 2026 pukul 00.00 WIB. Sebelumnya hanya portrait, pesan penantian dari Faridz, countdown dan buku tertutup; galeri, surat, isi buku, doa, lilin dan finale belum dirender.
+- Hadiah tetap terbuka setelah hari H dan pergantian tahun. Tombol surat dapat dipakai kapan saja setelah rilis; hanya pembukaan amplop otomatis yang khusus hari ulang tahun. Tanggal rilis hadiah terpisah dari countdown tahunan dan mengikuti jam perangkat.
 - Pada hari ulang tahun, amplop pribadi muncul sekali per sesi/tahun. Ketukan membuka lipatan amplop lalu mengangkat surat dengan kelopak bunga. Musik instrumental memiliki tombol putar, volume dan berhenti sendiri.
 - Saat hari H tiba, countdown terlipat, muncul ucapan khusus dan potret berwarna, lalu amplop terbuka setelah intro singkat. Tab tersembunyi menunda pembukaan dengan aman.
 - Setelah surat, Sopia dapat membuat permohonan dan mengetuk lilin 3D sampai padam, lalu melihat tujuh foto membentuk hati dengan nama Faridz muncul seperti tinta. Kedua bagian opsional dan tetap bisa dipakai tanpa WebGL atau dengan gerakan dikurangi.
