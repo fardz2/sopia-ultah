@@ -10,3 +10,5 @@ docs/reference/meng-to-sketchbook-source.html -text
 *.mp4 binary
 *.woff2 binary
 *.ttf binary
+*.stl binary
+*.sc binary

@@ -1,0 +1,260 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "sealRadius",
+        "expression": "12 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "sealHeight",
+        "expression": "1.4 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "rimWidth",
+        "expression": "1.6 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "recessDepth",
+        "expression": "0.35 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "letterHeight",
+        "expression": "0.28 mm"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "radius": "sealRadius",
+        "height": "sealHeight",
+        "operation": "new",
+        "name": "SealBase",
+        "body_name": "FaridzSopiaSeal"
+      }
+    },
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "edges": [
+          [
+            12,
+            0,
+            1.4
+          ]
+        ],
+        "distance": 0.25,
+        "name": "SoftRim"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "summary": true
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "offset": "sealHeight",
+        "name": "RecessProfile"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "radius": "sealRadius - rimWidth"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "recessDepth",
+        "direction": "negative",
+        "operation": "cut",
+        "name": "Recess"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "summary": true
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "offset": "sealHeight - recessDepth",
+        "name": "MonogramProfile"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "sealRadius * -0.600000000000",
+            "sealRadius * -0.316666666667"
+          ],
+          [
+            "sealRadius * -0.508333333333",
+            "sealRadius * -0.316666666667"
+          ],
+          [
+            "sealRadius * -0.508333333333",
+            "sealRadius * -0.050000000000"
+          ],
+          [
+            "sealRadius * -0.350000000000",
+            "sealRadius * -0.050000000000"
+          ],
+          [
+            "sealRadius * -0.350000000000",
+            "sealRadius * 0.041666666667"
+          ],
+          [
+            "sealRadius * -0.508333333333",
+            "sealRadius * 0.041666666667"
+          ],
+          [
+            "sealRadius * -0.508333333333",
+            "sealRadius * 0.225000000000"
+          ],
+          [
+            "sealRadius * -0.308333333333",
+            "sealRadius * 0.225000000000"
+          ],
+          [
+            "sealRadius * -0.308333333333",
+            "sealRadius * 0.316666666667"
+          ],
+          [
+            "sealRadius * -0.600000000000",
+            "sealRadius * 0.316666666667"
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "sealRadius * -0.141666666667",
+            "sealRadius * -0.333333333333"
+          ],
+          [
+            "sealRadius * -0.050000000000",
+            "sealRadius * -0.333333333333"
+          ],
+          [
+            "sealRadius * 0.183333333333",
+            "sealRadius * 0.333333333333"
+          ],
+          [
+            "sealRadius * 0.091666666667",
+            "sealRadius * 0.333333333333"
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "sealRadius * 0.250000000000",
+            "sealRadius * 0.316666666667"
+          ],
+          [
+            "sealRadius * 0.600000000000",
+            "sealRadius * 0.316666666667"
+          ],
+          [
+            "sealRadius * 0.600000000000",
+            "sealRadius * 0.225000000000"
+          ],
+          [
+            "sealRadius * 0.341666666667",
+            "sealRadius * 0.225000000000"
+          ],
+          [
+            "sealRadius * 0.341666666667",
+            "sealRadius * 0.045833333333"
+          ],
+          [
+            "sealRadius * 0.600000000000",
+            "sealRadius * 0.045833333333"
+          ],
+          [
+            "sealRadius * 0.600000000000",
+            "sealRadius * -0.316666666667"
+          ],
+          [
+            "sealRadius * 0.250000000000",
+            "sealRadius * -0.316666666667"
+          ],
+          [
+            "sealRadius * 0.250000000000",
+            "sealRadius * -0.225000000000"
+          ],
+          [
+            "sealRadius * 0.508333333333",
+            "sealRadius * -0.225000000000"
+          ],
+          [
+            "sealRadius * 0.508333333333",
+            "sealRadius * -0.045833333333"
+          ],
+          [
+            "sealRadius * 0.250000000000",
+            "sealRadius * -0.045833333333"
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "letterHeight",
+        "operation": "join",
+        "name": "RaisedFS"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "summary": true
+      }
+    }
+  ]
+}

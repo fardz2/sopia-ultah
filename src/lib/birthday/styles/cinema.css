@@ -1,6 +1,6 @@
 .cinema-stage {
   position: relative;
-  height: 200svh;
+  height: 280svh;
 }
 .cinema-book {
   height: 190svh;
@@ -97,6 +97,13 @@
   opacity: var(--book-opacity, 0);
   pointer-events: none;
 }
+.cinema-gallery .cinema-edge-note {
+  z-index: 2;
+}
+.cinema-gallery .cinema-edge-note span {
+  padding: 2px 4px;
+  background: var(--paper);
+}
 .is-interactive .book-handoff {
   pointer-events: auto;
 }
@@ -177,6 +184,15 @@
 }
 .cinema-cover-fallback em {
   font: italic 400 24px/1.1 var(--display);
+}
+.cinema-cover-seal {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 400 11px/1 Archivo, sans-serif;
 }
 .cinema-gallery-fallback {
   position: absolute;
@@ -273,7 +289,7 @@
 }
 @media (max-width: 640px) {
   .cinema-stage {
-    height: 175svh;
+    height: 240svh;
   }
   .cinema-book {
     height: 165svh;

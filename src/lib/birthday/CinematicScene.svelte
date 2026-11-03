@@ -75,10 +75,16 @@
       ? 0
       : Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
     arrived = currentProgress >= 0.92;
-    section.style.setProperty('--cinema-copy', String(1 - range(currentProgress, 0.12, 0.4)));
+    section.style.setProperty('--cinema-copy', String(
+      1 - (mode === 'gallery'
+        ? range(currentProgress, 0.035, 0.17)
+        : range(currentProgress, 0.12, 0.4)),
+    ));
     section.style.setProperty(
       '--cinema-end',
-      String(range(currentProgress, 0.5, 0.68) * (1 - range(currentProgress, 0.81, 0.94))),
+      String(mode === 'gallery'
+        ? range(currentProgress, 0.82, 0.92)
+        : range(currentProgress, 0.5, 0.68) * (1 - range(currentProgress, 0.81, 0.94))),
     );
     section.style.setProperty('--book-opacity', String(range(currentProgress, 0.83, 0.94)));
     section.style.setProperty(
@@ -199,7 +205,8 @@
       </div>
     {:else if mode === 'book' && status !== 'ready' && !interactive}
       <div class="cinema-cover-fallback" aria-hidden="true">
-        <span>7 november</span><em>sebuah buku kecil</em><span>untuk</span><strong>sopia.</strong><em
+        <span>7 november</span><em>sebuah buku kecil</em><span>untuk</span><strong>sopia.</strong>
+        <span class="cinema-cover-seal">f / s</span><em
           >dari faridz</em
         >
       </div>

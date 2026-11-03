@@ -27,6 +27,8 @@ Jalankan `npm run test:date` untuk mengecek batas tengah malam WIB, preview, dan
 - Saat waktu tersebut tiba, hadiah terbuka tanpa perlu memuat ulang. Amplop muncul otomatis sekali per sesi pada hari ulang tahun; musik tetap melalui tombol putar.
 - Sesudah hari H hadiah tetap terbuka sebagai kenangan, termasuk setelah berganti tahun. Surat dan perayaan bisa dibuka ulang dari hero.
 - Galeri foto 3D, buku yang terbuka mengikuti scroll, dan buku Svelte dengan tujuh foto serta tiga video.
+- Kamera melewati foto di sepanjang kurva, tepi foto melengkung seperti kertas, dan daun lama membingkai gerakan dari sudut layar.
+- Segel F/S dari SolidCraft pada sampul. Model CAD, script pembuat, dan catatan sumber tersedia dalam `docs/reference/solidcraft/`, `scripts/solidcraft-fs-seal.json`, dan `docs/reference/kage-motion-adaptation.md`.
 - Zoom, kaca pembesar, navigasi sentuh/keyboard, dan video yang baru dimuat ketika diputar.
 - Amplop romantis, musik instrumental melalui tombol putar, lilin 3D interaktif, dan penutup tujuh foto berbentuk hati.
 - Three.js dimuat mendekati adegannya. Mode kurangi gerakan dan fallback tanpa WebGL tetap menyediakan konten serta kontrol.

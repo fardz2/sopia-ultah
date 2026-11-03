@@ -1,5 +1,7 @@
 import {
   BoxGeometry,
+  Color,
+  Float32BufferAttribute,
   Group,
   Mesh,
   MeshBasicMaterial,
@@ -8,6 +10,7 @@ import {
   SRGBColorSpace,
 } from 'three';
 import type { PerspectiveCamera, Scene } from 'three';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Resources } from './resources';
 import { range, smooth, type Composition } from './types';
 
@@ -19,7 +22,12 @@ export async function buildBook(
 ): Promise<Composition> {
   const width = 2.2,
     height = 3.1;
-  const spread = await resources.load('/landing-pages/birthday-media/kenangan-01.svg');
+  const [spread, sealGeometry] = await Promise.all([
+    resources.load('/landing-pages/birthday-media/kenangan-01.svg'),
+    new STLLoader().loadAsync('/landing-pages/birthday-media/fs-seal.stl')
+      .then((geometry) => resources.geometry(geometry))
+      .catch(() => undefined),
+  ]);
   await document.fonts.ready;
   const cover = document.createElement('canvas');
   cover.width = 1024;
@@ -42,10 +50,9 @@ export async function buildBook(
   ink.fillText('untuk', 512, 620);
   ink.font = 'italic 400 190px "Instrument Serif"';
   ink.fillText('sopia.', 512, 830);
-  ink.beginPath();
-  ink.moveTo(432, 950);
-  ink.lineTo(592, 950);
-  ink.stroke();
+  // This quiet printed monogram also remains if the optional CAD mesh fails.
+  ink.font = '400 28px Archivo';
+  ink.fillText('f / s', 512, 963);
   ink.font = 'italic 400 68px "Instrument Serif"';
   ink.fillText('dari faridz', 512, 1110);
   ink.font = '400 29px Archivo';
@@ -100,6 +107,27 @@ export async function buildBook(
   ]);
   lid.position.x = width / 2;
   hinge.add(lid);
+  if (sealGeometry) {
+    const position = sealGeometry.getAttribute('position');
+    const colors = new Float32Array(position.count * 3);
+    const color = new Color();
+    for (let i = 0; i < position.count; i++) {
+      const monogram = position.getZ(i) > 1.1 && Math.hypot(position.getX(i), position.getY(i)) < 10;
+      color.set(monogram ? '#3d2c1d' : '#b79a68');
+      colors.set([color.r, color.g, color.b], i * 3);
+    }
+    sealGeometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+    const seal = new Mesh(
+      sealGeometry,
+      resources.material(new MeshStandardMaterial({
+        vertexColors: true, metalness: 0.2, roughness: 0.48,
+      })),
+    );
+    seal.name = 'faridz-sopia-seal';
+    seal.scale.setScalar(0.013);
+    seal.position.set(width / 2, -0.5, 0.025);
+    hinge.add(seal);
+  }
   const spine = new Mesh(resources.geometry(new BoxGeometry(0.06, height + 0.06, 0.24)), cloth);
   spine.position.set(-0.02, 0, 0.025);
   book.add(spine);
