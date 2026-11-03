@@ -7,6 +7,7 @@ import { createTableScene } from './scenes/table';
 import { createOpeningScene } from './scenes/opening';
 import { createPhotoScene } from './scenes/photos';
 import { createWishScene } from './scenes/wishes';
+import { createWorldBook } from './scenes/book';
 import type { WorldCallbacks,WorldDriver,WorldLayout,WorldSnapshot } from './types';
 
 export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:WorldCallbacks,signal:AbortSignal):Promise<WorldDriver>{
@@ -52,7 +53,7 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
     rejectInit=undefined;
     if(disposed)throw new DOMException('Disposed','AbortError');
     const ctx={resources,assets:prepared.assets,camera,signal,callbacks,invalidate,fail(){destroy();callbacks.onStatus('failed');}};
-    parts.push(prepared.opening,createPhotoScene(ctx),createWishScene(ctx));parts.forEach(part=>scene.add(part.root));callbacks.onStatus('ready');
+    parts.push(prepared.opening,createPhotoScene(ctx),createWorldBook(ctx),createWishScene(ctx));parts.forEach(part=>scene.add(part.root));callbacks.onStatus('ready');
   }catch(error){destroy();throw error;}
   return{
     update(value){snapshot=value;const key=JSON.stringify(value);if(key!==lastKey){lastKey=key;if(value.hidden){cancelAnimationFrame(frame);frame=0;}else invalidate();}},

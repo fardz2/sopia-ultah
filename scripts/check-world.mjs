@@ -54,3 +54,14 @@ if (selected === 'projection' || selected === 'all') {
   assert.ok(Math.abs(rect.width-297)<.001); assert.ok(Math.abs(rect.height-492.28)<.001);
   console.log('PASS native video projection fractions');
 }
+if (selected === 'curl' || selected === 'all') {
+  const { curlPoint } = await moduleAt('pageCurl');
+  for (const u of [0,.25,.5,1]) {
+    assert.ok(Math.abs(curlPoint(u,0,2.2,'next').x-u*2.2)<1e-6);
+    assert.ok(Math.abs(curlPoint(u,1,2.2,'next').x+u*2.2)<1e-6);
+    assert.equal(curlPoint(0,.5,2.2,'next').x,0);
+  }
+  assert.ok(curlPoint(1,.5,2.2,'next').z>1.5);
+  assert.ok(curlPoint(1,0,2.2,'prev').x<0);
+  console.log('PASS mesh page flat endpoints, raised curl and fixed hinge');
+}

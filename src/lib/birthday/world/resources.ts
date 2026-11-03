@@ -17,6 +17,10 @@ export class WorldResources extends Resources {
     texture.anisotropy = 4;
     return this.texture(texture);
   }
+  forgetTexture(url: string, texture: import('three').Texture) {
+    this.textureLoads.delete(url);
+    this.releaseTexture(texture);
+  }
   async loadGeometry(url: string, signal: AbortSignal) {
     const response = await fetch(url, { signal });
     if (!response.ok) throw new Error('Model unavailable');

@@ -24,6 +24,24 @@ try:
      page.evaluate("([chapter,progress])=>window.__worldSet({unlocked:true,story:{chapter,progress}})",[chapter,progress])
      page.wait_for_function("(chapter)=>document.querySelector('canvas').dataset.chapter===chapter",arg=chapter)
    page.set_viewport_size({'width':768,'height':1024});page.wait_for_load_state('networkidle');page.wait_for_timeout(200)
+  if args.case=='book':
+   page.evaluate("()=>window.__worldSet({unlocked:true,story:{chapter:'book',progress:1}})")
+   page.wait_for_selector('#sbRight');page.locator('#sbRight').click();page.locator('#sbRight').click()
+   page.wait_for_function("document.querySelector('#worldBookPage').textContent.includes('Kenangan 03')")
+   page.wait_for_selector('#worldVideoPlay');page.locator('#worldVideoPlay').click();page.wait_for_selector('video')
+   page.locator('#sbLeft').click();page.wait_for_function("!document.querySelector('video')")
+   page.evaluate('()=>window.__worldSeek(6)');page.wait_for_selector('#worldVideoPlay')
+   page.locator('#worldVideoPlay').click();page.wait_for_selector('video')
+   page.locator('#fixtureHide').click();page.wait_for_function("!document.querySelector('video')")
+   page.locator('#fixtureHide').click()
+   for width,height in [(390,844),(430,932),(768,1024),(1440,900)]:
+    page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(100)
+    rect=page.locator('.world-book-surface').bounding_box();video=page.locator('.world-book-video').bounding_box()
+    assert abs(video['x']-(rect['x']+rect['width']*.584))<2
+    assert abs(video['height']-rect['height']*.794)<2
+   page.evaluate('()=>window.__worldSeek(0)');page.wait_for_selector('#zIn');page.locator('#zIn').click()
+   page.keyboard.press('ArrowLeft');page.wait_for_function("document.querySelector('#worldBookPage').textContent.includes('Kenangan 10')")
+   page.wait_for_timeout(350)
   page.wait_for_timeout(200);draws=page.evaluate('window.__worldDraws');assert draws>0
   page.wait_for_timeout(200);assert draws==page.evaluate('window.__worldDraws')
   page.locator('#fixtureHide').click();page.wait_for_timeout(150);draws=page.evaluate('window.__worldDraws');page.wait_for_timeout(150);assert draws==page.evaluate('window.__worldDraws')

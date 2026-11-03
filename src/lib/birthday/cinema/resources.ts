@@ -39,6 +39,9 @@ export class Resources {
   canvas(value: HTMLCanvasElement) {
     return this.texture(new CanvasTexture(value));
   }
+  releaseTexture(value: Texture) {
+    if (this.textures.delete(value)) value.dispose();
+  }
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
