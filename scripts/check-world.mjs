@@ -32,3 +32,18 @@ if (selected === 'state' || selected === 'all') {
   assert.equal(state.index, 0);
   console.log('PASS world access and book transactions (release, wrapping, cancellation, stale completion)');
 }
+if (selected === 'assets' || selected === 'all') {
+  const { modelManifest } = await moduleAt('modelManifest');
+  const { STLLoader } = await import('three/examples/jsm/loaders/STLLoader.js');
+  for (const part of modelManifest) {
+    const bytes = await readFile(new URL(`../public${part.url}`, import.meta.url));
+    const geometry = new STLLoader().parse(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+    geometry.computeBoundingBox();
+    assert.ok(geometry.getAttribute('position').count > 0, part.name);
+    assert.ok(geometry.boundingBox.max.z - geometry.boundingBox.min.z > 0, part.name);
+    geometry.dispose();
+  }
+  assert.ok(modelManifest.some(p => p.name === 'gift-lid'));
+  assert.ok(modelManifest.some(p => p.name === 'envelope-flap'));
+  console.log(`PASS ${modelManifest.length} SolidCraft parts, moving lid/flap and STL geometry`);
+}

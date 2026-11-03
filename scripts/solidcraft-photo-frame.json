@@ -1,0 +1,108 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "W",
+        "expression": "108 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "H",
+        "expression": "228 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "rim",
+        "expression": "6 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "3 mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "W",
+        "width": "H",
+        "height": "depth",
+        "center": [
+          0,
+          0,
+          "depth/2"
+        ],
+        "operation": "new",
+        "body_name": "PhotoFrame",
+        "name": "PhotoFrame"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "W-2*rim",
+        "width": "H-2*rim",
+        "height": "depth+2",
+        "center": [
+          0,
+          0,
+          "depth/2"
+        ],
+        "operation": "cut",
+        "targets": [
+          "PhotoFrame"
+        ],
+        "name": "Window"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 70,
+        "width": 4,
+        "height": 50,
+        "center": [
+          0,
+          "-H/2",
+          -20
+        ],
+        "operation": "new",
+        "body_name": "PhotoStand",
+        "name": "PhotoStand"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\photo-frame.stl",
+        "bodies": [
+          "PhotoFrame"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\photo-stand.stl",
+        "bodies": [
+          "PhotoStand"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "summary": true
+      }
+    }
+  ]
+}

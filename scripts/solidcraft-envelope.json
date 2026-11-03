@@ -1,0 +1,293 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "W",
+        "expression": "160 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "H",
+        "expression": "112 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "paper",
+        "expression": "0.5 mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "W",
+        "width": "H",
+        "height": "paper",
+        "center": [
+          0,
+          0,
+          "paper/2"
+        ],
+        "operation": "new",
+        "body_name": "EnvelopeBack",
+        "name": "EnvelopeBack"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "PocketLeftProfile",
+        "offset": 0.6
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "-W/2",
+            "-H/2"
+          ],
+          [
+            "-W/2",
+            "H/2"
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "paper",
+        "operation": "new",
+        "name": "PocketLeft"
+      }
+    },
+    {
+      "command": "body.rename",
+      "params": {
+        "body": "Body1",
+        "name": "PocketLeft"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "PocketRightProfile",
+        "offset": 0.6
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "W/2",
+            "H/2"
+          ],
+          [
+            "W/2",
+            "-H/2"
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "paper",
+        "operation": "new",
+        "name": "PocketRight"
+      }
+    },
+    {
+      "command": "body.rename",
+      "params": {
+        "body": "Body2",
+        "name": "PocketRight"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "PocketBottomProfile",
+        "offset": 1.1
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "-W/2",
+            "-H/2"
+          ],
+          [
+            "W/2",
+            "-H/2"
+          ],
+          [
+            0,
+            "H*.08"
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "paper",
+        "operation": "new",
+        "name": "PocketBottom"
+      }
+    },
+    {
+      "command": "body.rename",
+      "params": {
+        "body": "Body3",
+        "name": "PocketBottom"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "EnvelopeFlapProfile",
+        "offset": 1.7
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "-W/2",
+            "H/2"
+          ],
+          [
+            "W/2",
+            "H/2"
+          ],
+          [
+            0,
+            "-H*.12"
+          ]
+        ],
+        "closed": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": "paper",
+        "operation": "new",
+        "name": "EnvelopeFlap"
+      }
+    },
+    {
+      "command": "body.rename",
+      "params": {
+        "body": "Body4",
+        "name": "EnvelopeFlap"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "W - 16",
+        "width": "H - 16",
+        "height": 0.45,
+        "center": [
+          0,
+          0,
+          0.725
+        ],
+        "operation": "new",
+        "body_name": "Letter",
+        "name": "Letter"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\envelope-back.stl",
+        "bodies": [
+          "EnvelopeBack"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\envelope-pocket.stl",
+        "bodies": [
+          "PocketLeft",
+          "PocketRight",
+          "PocketBottom"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\envelope-flap.stl",
+        "bodies": [
+          "EnvelopeFlap"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "file.export",
+      "params": {
+        "path": "D:\\project\\ultah\\public\\landing-pages\\birthday-media\\world\\envelope-letter.stl",
+        "bodies": [
+          "Letter"
+        ],
+        "quality": "standard"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "summary": true
+      }
+    }
+  ]
+}
