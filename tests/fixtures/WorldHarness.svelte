@@ -1,8 +1,10 @@
 <script lang="ts">
+  import {onMount} from 'svelte';
   import BirthdayWorld from '../../src/lib/birthday/BirthdayWorld.svelte';
   import type {WorldSnapshot,WorldStatus} from '../../src/lib/birthday/world/types';
   let status=$state<WorldStatus>('idle');
   let snapshot=$state.raw<WorldSnapshot>({unlocked:false,hidden:false,story:{chapter:'opening',progress:0},ritual:{open:false,phase:'sealed',revision:0,blow:0,replay:0},book:{index:0,turn:null,nextId:1,zoom:1,loupe:{on:false,u:.5,v:.5},videoPlaying:false}});
+  onMount(()=>{Object.assign(window,{__worldSet:(patch:Partial<WorldSnapshot>)=>snapshot={...snapshot,...patch}});});
 </script>
 <BirthdayWorld {snapshot} onstatus={value=>status=value}/>
 <div class="fixture-controls"><span id="fixtureStatus">{status}</span><button id="fixtureHide" onclick={()=>snapshot={...snapshot,hidden:!snapshot.hidden}}>toggle hidden</button></div>

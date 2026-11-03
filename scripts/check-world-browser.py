@@ -13,8 +13,17 @@ try:
  with sync_playwright() as p:
   browser=p.chromium.launch(headless=True);page=browser.new_page(viewport={'width':1440,'height':900});errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
   page.add_init_script("window.__worldDraws=0;for(const key of ['drawElements','drawArrays']){const old=WebGL2RenderingContext.prototype[key];WebGL2RenderingContext.prototype[key]=function(...args){if(this.canvas.id==='birthdayWorldCanvas')window.__worldDraws++;return old.apply(this,args)}}")
+  page.set_default_timeout(7000)
   page.goto(f'http://127.0.0.1:{port}/tests/fixtures/world-harness.html',wait_until='networkidle');page.wait_for_selector('[data-world-status="ready"]')
   assert page.locator('canvas').count()==1
+  if args.case=='photos':
+   page.evaluate("()=>window.__worldSet({unlocked:false,story:{chapter:'gallery',progress:.5}})")
+   page.wait_for_function("document.querySelector('canvas').dataset.chapter==='teaser'")
+   for chapter in ['frame','iris','gallery','wishes','closing']:
+    for progress in [0,.5,1,.2]:
+     page.evaluate("([chapter,progress])=>window.__worldSet({unlocked:true,story:{chapter,progress}})",[chapter,progress])
+     page.wait_for_function("(chapter)=>document.querySelector('canvas').dataset.chapter===chapter",arg=chapter)
+   page.set_viewport_size({'width':768,'height':1024});page.wait_for_load_state('networkidle');page.wait_for_timeout(200)
   page.wait_for_timeout(200);draws=page.evaluate('window.__worldDraws');assert draws>0
   page.wait_for_timeout(200);assert draws==page.evaluate('window.__worldDraws')
   page.locator('#fixtureHide').click();page.wait_for_timeout(150);draws=page.evaluate('window.__worldDraws');page.wait_for_timeout(150);assert draws==page.evaluate('window.__worldDraws')

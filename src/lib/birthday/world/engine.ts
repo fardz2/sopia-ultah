@@ -5,6 +5,8 @@ import { canShowChapter } from './access';
 import { resolveStoryPose } from './cameraRig';
 import { createTableScene } from './scenes/table';
 import { createOpeningScene } from './scenes/opening';
+import { createPhotoScene } from './scenes/photos';
+import { createWishScene } from './scenes/wishes';
 import type { WorldCallbacks,WorldDriver,WorldLayout,WorldSnapshot } from './types';
 
 export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:WorldCallbacks,signal:AbortSignal):Promise<WorldDriver>{
@@ -18,13 +20,14 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
   let disposed=false,frame=0,lastKey='',rejectInit:((error:unknown)=>void)|undefined;
   let snapshot:WorldSnapshot|undefined;
   let layout:WorldLayout={width:innerWidth,height:innerHeight,dpr:1,mobile:false,portrait:false,targets:{}};
-  const table=createTableScene(resources);scene.add(table.root);
+  const table=createTableScene(resources,signal,invalidate);scene.add(table.root);
   const parts:{root:import('three').Object3D;apply(s:WorldSnapshot,l:WorldLayout,n:number):boolean|void;dispose():void}[]=[];
   function invalidate(){if(!disposed&&!snapshot?.hidden&&!frame)frame=requestAnimationFrame(draw);}
   function draw(now:number){
     frame=0;if(disposed||!snapshot||snapshot.hidden)return;
     const allowed=canShowChapter(snapshot.unlocked,snapshot.story.chapter);
     const current=allowed?snapshot:{...snapshot,story:{chapter:'teaser' as const,progress:0},ritual:{...snapshot.ritual,open:false}};
+    canvas.dataset.chapter=current.story.chapter;
     resolveStoryPose(camera,current,layout);
     table.root.visible=!current.ritual.open;
     let moving=false;
@@ -42,13 +45,14 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
   signal.addEventListener('abort',destroy,{once:true});canvas.addEventListener('webglcontextlost',lost);
   try{
     callbacks.onStatus('loading');
-    const opening=await new Promise<Awaited<ReturnType<typeof createOpeningScene>>>((resolve,reject)=>{
+    const prepared=await new Promise<{opening:Awaited<ReturnType<typeof createOpeningScene>>;assets:Awaited<ReturnType<typeof loadWorldAssets>>}>((resolve,reject)=>{
       rejectInit=reject;
-      loadWorldAssets(resources,signal).then(assets=>createOpeningScene(resources,assets,camera,signal)).then(resolve,reject);
+      loadWorldAssets(resources,signal).then(async assets=>({assets,opening:await createOpeningScene(resources,assets,camera,signal)})).then(resolve,reject);
     });
     rejectInit=undefined;
     if(disposed)throw new DOMException('Disposed','AbortError');
-    parts.push(opening);scene.add(opening.root);callbacks.onStatus('ready');
+    const ctx={resources,assets:prepared.assets,camera,signal,callbacks,invalidate,fail(){destroy();callbacks.onStatus('failed');}};
+    parts.push(prepared.opening,createPhotoScene(ctx),createWishScene(ctx));parts.forEach(part=>scene.add(part.root));callbacks.onStatus('ready');
   }catch(error){destroy();throw error;}
   return{
     update(value){snapshot=value;const key=JSON.stringify(value);if(key!==lastKey){lastKey=key;if(value.hidden){cancelAnimationFrame(frame);frame=0;}else invalidate();}},

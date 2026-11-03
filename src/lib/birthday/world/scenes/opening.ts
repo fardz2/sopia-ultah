@@ -37,7 +37,7 @@ export async function createOpeningScene(resources:WorldResources,assets:WorldAs
     }else{
       gift.root.position.set(layout.mobile?-2.1:-2.8,-1.8,5);stationery.position.z=4.3;
       portrait.visible=snapshot.story.chapter==='opening';
-      if(portrait.visible)placeInRect(portrait,1.08,2.28,layout.targets.portrait??defaultTarget('portrait',layout),camera,8);
+      if(portrait.visible)placeInRect(portrait,1.08,2.28,layout.targets.portrait??defaultTarget('portrait',layout),camera,layout,8);
     }
   },dispose(){}};
 }

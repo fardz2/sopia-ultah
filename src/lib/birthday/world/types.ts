@@ -19,3 +19,11 @@ export interface WorldCallbacks {
   onBookProjection(rects: { spread: ScreenRect | null; video: ScreenRect | null }): void;
 }
 export interface WorldDriver { update(snapshot: WorldSnapshot): void; resize(layout: WorldLayout): void; destroy(): void }
+export interface WorldContext {
+  camera: import('three').PerspectiveCamera;
+  resources: import('./resources').WorldResources;
+  assets: import('./assets').WorldAssets;
+  signal: AbortSignal; callbacks: WorldCallbacks;
+  invalidate(): void; fail(): void;
+}
+export interface WorldPart { root: import('three').Object3D; apply(snapshot:WorldSnapshot,layout:WorldLayout,now:number):boolean|void;dispose():void }

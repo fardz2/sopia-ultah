@@ -4,7 +4,13 @@ import { Resources } from '../cinema/resources';
 
 export class WorldResources extends Resources {
   private closed = false;
-  async loadTexture(url: string, signal: AbortSignal) {
+  private textureLoads = new Map<string,Promise<import('three').Texture>>();
+  loadTexture(url:string,signal:AbortSignal) {
+    let promise=this.textureLoads.get(url);
+    if(!promise){promise=this.decodeTexture(url,signal);this.textureLoads.set(url,promise);}
+    return promise;
+  }
+  private async decodeTexture(url: string, signal: AbortSignal) {
     const texture = await new TextureLoader().loadAsync(url);
     if (signal.aborted || this.closed) { texture.dispose(); throw new DOMException('Disposed','AbortError'); }
     texture.colorSpace = SRGBColorSpace;
@@ -20,5 +26,5 @@ export class WorldResources extends Resources {
     geometry.rotateX(-Math.PI / 2).scale(.01,.01,.01);
     return this.geometry(geometry);
   }
-  override dispose() { this.closed = true; super.dispose(); }
+  override dispose() { this.closed = true; this.textureLoads.clear(); super.dispose(); }
 }
