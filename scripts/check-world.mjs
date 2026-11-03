@@ -47,3 +47,10 @@ if (selected === 'assets' || selected === 'all') {
   assert.ok(modelManifest.some(p => p.name === 'envelope-flap'));
   console.log(`PASS ${modelManifest.length} SolidCraft parts, moving lid/flap and STL geometry`);
 }
+if (selected === 'projection' || selected === 'all') {
+  const { videoRect } = await moduleAt('layout');
+  const rect = videoRect({ x: 100, y: 200, width: 880, height: 620 });
+  assert.ok(Math.abs(rect.x-613.92)<.001); assert.ok(Math.abs(rect.y-263.86)<.001);
+  assert.ok(Math.abs(rect.width-297)<.001); assert.ok(Math.abs(rect.height-492.28)<.001);
+  console.log('PASS native video projection fractions');
+}
