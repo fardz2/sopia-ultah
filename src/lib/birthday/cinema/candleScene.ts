@@ -13,13 +13,14 @@ import type { PerspectiveCamera, Scene } from 'three';
 import { Resources } from './resources';
 import { range, type Composition } from './types';
 
-export function createCandleModel(resources: Resources) {
+export function buildCandle(scene: Scene, camera: PerspectiveCamera, resources: Resources): Composition {
   const wax = resources.material(new MeshStandardMaterial({ color: '#eee0c8', roughness: 0.8 }));
   const brass = resources.material(
     new MeshStandardMaterial({ color: '#9b7850', roughness: 0.65, metalness: 0.15 }),
   );
   const wickMaterial = resources.material(new MeshBasicMaterial({ color: '#423328' }));
   const candle = new Group();
+  scene.add(candle);
   const plate = new Mesh(resources.geometry(new CylinderGeometry(0.88, 0.8, 0.065, 48)), brass);
   plate.position.y = -1.05;
   candle.add(plate);
@@ -68,8 +69,7 @@ export function createCandleModel(resources: Resources) {
     smoke.add(strand);
   }
   return {
-    root: candle,
-    update(progress: number) {
+    update(progress, aspect) {
       const extinguish = range(progress, 0, 0.4);
       flame.scale.set(1 - extinguish * 0.65, Math.max(0.01, 1 - extinguish), 1 - extinguish * 0.65);
       flame.rotation.z = -extinguish * 0.75;
@@ -79,11 +79,8 @@ export function createCandleModel(resources: Resources) {
       smoke.position.y = 0.86 + range(progress, 0.25, 1) * 0.7;
       smoke.scale.setScalar(0.5 + progress * 0.8);
       candle.rotation.y = -0.15;
+      camera.position.set(0, 0.55, aspect < 0.8 ? 6.6 : 5.8);
+      camera.lookAt(0, 0.15, 0);
     },
   };
-}
-
-export function buildCandle(scene: Scene, camera: PerspectiveCamera, resources: Resources): Composition {
-  const model=createCandleModel(resources);scene.add(model.root);
-  return {update(progress,aspect){model.update(progress);camera.position.set(0,.55,aspect<.8?6.6:5.8);camera.lookAt(0,.15,0);}};
 }

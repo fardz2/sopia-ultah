@@ -307,10 +307,10 @@
 >
   <BackgroundGarden
     {reduced}
+    {scrolling}
     paused={hidden ||
       greetingOpen ||
       bookBusy ||
-      scrolling ||
       scene.covered ||
       galleryActive ||
       cinemaBookActive}

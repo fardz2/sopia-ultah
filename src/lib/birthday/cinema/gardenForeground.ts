@@ -1,10 +1,10 @@
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from 'three';
-import type { PerspectiveCamera, Object3D } from 'three';
+import type { PerspectiveCamera, Scene } from 'three';
 import type { Resources } from './resources';
 import { range, smooth } from './types';
 
 /** Existing watercolor cutouts become near planes along the camera's route. */
-export async function buildGardenForeground(scene: Object3D, resources: Resources, camera: PerspectiveCamera) {
+export async function buildGardenForeground(scene: Scene, resources: Resources, camera: PerspectiveCamera) {
   const textures = await Promise.all(
     ['leaf-monstera.webp', 'leaf-fern.webp'].map((file) =>
       resources.load('/landing-pages/birthday-media/' + file),

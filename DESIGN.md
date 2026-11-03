@@ -1,5 +1,13 @@
 # Visual design
 
+## Current scope: gift-table background only
+
+The user's first option is authoritative as of 3 November 2026: retain the previous Svelte layout, cream palette, story transitions, native media book and greeting ritual. Only the decorative background uses the new SolidCraft gift box and sealed F/S envelope, alongside the existing watercolor leaves. The full-world renderer, mesh-book replacement and ritual migration have been removed. Photo-frame CAD files remain available as assets.
+
+One transparent background canvas keeps the gifts at the viewport edges and flexes the two leaf meshes. A small camera shift follows normalized native scrolling; it never owns the page scroll or the existing gallery/book cameras. Rendering caps at 30fps and DPR 1.25 desktop / 1 phone, with no shadows or postprocessing. It pauses for hidden tabs, story-photo coverage, active cinema scenes, dialog and book operations. Reduced motion bypasses the background renderer. Optional model failures use simple props; artwork/WebGL failure restores the original static background. Lifecycle cancellation disposes pending/late resources and recreates the canvas on a reduced-motion restart.
+
+Production output for this scope: app JS 122.07 kB (45.68 kB gzip), background controller 6.15 kB (2.92 kB gzip), existing cinema controller 9.61 kB (4.26 kB gzip), shared Three.js/resources chunk 547.34 kB (137.55 kB gzip). The shared chunk is lazy; Vite's 500 kB advisory remains visible. The decorative scene measured 14 draw calls and 5,070 triangles in Chromium. Production browser checks covered 1440×900, 768×1024, 390×844 and 430×932, including motion preference changes, model failure and WebGL loss. Physical-device battery/thermal profiling was not performed. Historical sections below describe the retained layout and earlier implementations.
+
 ## Native Svelte 5 runtime
 
 The complete page is rendered by Svelte components without an iframe, HTML injection, self-bootstrapping public scene scripts or a DOM-copy observer. `BirthdaySketchbookView.svelte` coordinates calendar and scroll state. Separate native components own the hero, clipped text, media book, garden canvases, star field and greeting dialog. The curved leaf chain and magnified copy are Svelte snippets, with index, turning progress, zoom, loupe and video represented by rune state. Graphics and music remain typed, scoped controllers with cleanup. The upstream HTML is preserved only as a byte-identical reference under `docs/reference`; legacy served documents are retired.

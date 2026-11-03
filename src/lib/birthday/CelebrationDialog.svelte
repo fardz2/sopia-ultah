@@ -5,27 +5,18 @@
   import { letterLift } from './textMotion';
   import BirthdayCandle from './BirthdayCandle.svelte';
   import BirthdayFinale from './BirthdayFinale.svelte';
-  import type { RitualPhase } from './world/types';
   import './styles/ritual.css';
   let {
     open = $bindable(false),
     reduced = false,
     hidden = false,
     preview = false,
-    world = false,
-    phase = $bindable<RitualPhase>('sealed'),
-    blow = $bindable(0),
-    replay = $bindable(0),
     onbook,
   }: {
     open?: boolean;
     reduced?: boolean;
     hidden?: boolean;
     preview?: boolean;
-    world?: boolean;
-    phase?: RitualPhase;
-    blow?: number;
-    replay?: number;
     onbook: () => void;
   } = $props();
   let dialog: HTMLDialogElement;
@@ -35,7 +26,8 @@
     volume = $state(35),
     note = $state('musik kotak musik · ketuk untuk memutar'),
     supported = $state(true),
-    titleVisible = $state(false);
+    titleVisible = $state(false),
+    phase = $state<'sealed' | 'opening' | 'letter' | 'candle' | 'finale'>('sealed');
   const dialogTitle = $derived(
     phase === 'letter'
       ? 'birthdayGreetingTitle'
@@ -63,11 +55,6 @@
     envelopeTimer = 0,
     entranceRun = 0,
     destroyed = false;
-  let previousFocus: HTMLElement | null = null, previousOverflow = '', scrollPosition = 0, locked = false;
-  function unlockPage() {
-    if(!locked)return;locked=false;document.documentElement.style.overflow=previousOverflow;
-    window.scrollTo({top:scrollPosition,behavior:'instant'});previousFocus?.isConnected&&previousFocus.focus({preventScroll:true});
-  }
   async function revealTitle() {
     const run = ++entranceRun;
     titleVisible = false;
@@ -82,7 +69,6 @@
   }
   function revealLetter() {
     clearTimeout(envelopeTimer);
-    envelopeTimer = 0;
     if (destroyed || !open) return;
     phase = 'letter';
     burst();
@@ -100,8 +86,6 @@
     music?.stop();
     clear();
     phase = next;
-    if(next==='candle')blow=0;
-    if(next==='finale')replay++;
     tick().then(() => {
       if (!destroyed && open && phase === next) dialog.scrollTop = 0;
     });
@@ -120,7 +104,7 @@
   }
   function burst() {
     clear();
-    if (reduced || hidden || world) return;
+    if (reduced || hidden) return;
     const colors = ['#a87b48', '#a4aa88', '#cbb48c', '#8f9c7d'];
     petals = Array.from({ length: innerWidth <= 640 ? 12 : 18 }, (_, i) => ({
       id: i,
@@ -158,14 +142,11 @@
       clearTimeout(envelopeTimer);
       music?.destroy();
       clearTimeout(petalTimer);
-      unlockPage();
     };
   });
   $effect(() => {
     if (!dialog) return;
     if (open && !dialog.open) {
-      previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;
-      previousOverflow=document.documentElement.style.overflow;scrollPosition=scrollY;locked=true;document.documentElement.style.overflow='hidden';
       phase = 'sealed';
       titleVisible = false;
       dialog.showModal();
@@ -176,20 +157,12 @@
       music?.stop();
       clear();
       clearTimeout(envelopeTimer);
-      envelopeTimer=0;
-      unlockPage();
     }
   });
   $effect(() => {
     if (hidden) {
       music?.stop();
       clear();
-      clearTimeout(envelopeTimer);envelopeTimer=0;
-      cancelAnimationFrame(titleFrame);
-    }else if(open&&phase==='opening'&&!envelopeTimer){
-      envelopeTimer=window.setTimeout(revealLetter,420);
-    }else if(open&&phase==='letter'&&!titleVisible){
-      revealTitle();
     }
     if (reduced) {
       clear();
@@ -206,7 +179,6 @@
 />
 <dialog
   class="birthday-greeting"
-  class:world-ritual={world}
   id="birthdayGreeting"
   bind:this={dialog}
   aria-labelledby={dialogTitle}
@@ -248,7 +220,6 @@
         <button
           type="button"
           class="birthday-envelope"
-          data-world-target="letter"
           id="birthdayUnseal"
           bind:this={envelopeButton}
           aria-label="Buka surat ulang tahun untuk Sopia"
@@ -354,9 +325,9 @@
         >
       </div>
     {:else if phase === 'candle'}
-      <BirthdayCandle {reduced} {hidden} {world} bind:progress={blow} onback={showLetter} onfinale={() => showRitual('finale')} />
+      <BirthdayCandle {reduced} {hidden} onback={showLetter} onfinale={() => showRitual('finale')} />
     {:else if phase === 'finale'}
-      <BirthdayFinale {reduced} {world} onreplay={()=>replay++} onback={showLetter} onbook={visitBook} />
+      <BirthdayFinale {reduced} onback={showLetter} onbook={visitBook} />
     {/if}
   </div>
 </dialog>

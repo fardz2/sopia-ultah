@@ -150,6 +150,10 @@ Node checks follow the existing TypeScript-transpile/Node-assert pattern in `scr
 - [ ] Obtain one fresh whole-change review against this plan/spec, focused on untested state transitions, calendar guards, video races, projection/focus, and resource cleanup. Address material findings and run the checks they affect; no additional visual-polish cycle.
 - [ ] Record measured output, run `rtk proxy git diff --check`, and commit the verified implementation/docs with explicit file lists. Report the local preview and limitations. Push/publish only when the user requests it.
 
+## Status setelah arahan pengguna
+
+Pada 3 November 2026, pengguna membatalkan migrasi seluruh pengalaman ke dunia 3D dan meminta pilihan pertama: background meja hadiah krem saja. Layout, buku, ritual dan transisi kembali ke checkpoint `17dd282`; komponen background memakai kotak berpita dan amplop F/S dari SolidCraft, ditambah daun lama. Kamera background mengikuti scroll secara halus. Tasks 7–8 di atas digantikan oleh lingkup background ini. Rencana full 3D ini bukan lagi rencana implementasi aktif.
+
 ## Plan Self-Review
 
 - Spec coverage: scene/story scope → Tasks 2–4; real mesh book and native media → Task 5; letter/candle/finale/music → Task 6; calendar/session/native fallback/one context → Tasks 1, 3, 7; performance/accessibility/bounded visual QA → Tasks 3–8.

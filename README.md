@@ -29,9 +29,10 @@ Jalankan `npm run test:date` untuk mengecek batas tengah malam WIB, preview, dan
 - Galeri foto 3D, buku yang terbuka mengikuti scroll, dan buku Svelte dengan tujuh foto serta tiga video.
 - Kamera melewati foto di sepanjang kurva, tepi foto melengkung seperti kertas, dan daun lama membingkai gerakan dari sudut layar.
 - Segel F/S dari SolidCraft pada sampul. Model CAD, script pembuat, dan catatan sumber tersedia dalam `docs/reference/solidcraft/`, `scripts/solidcraft-fs-seal.json`, dan `docs/reference/kage-motion-adaptation.md`.
+- Background meja hadiah krem dengan kotak berpita, amplop F/S dan daun 3D di tepi layar. Kamera background mengikuti scroll secara halus; tampilan dan transisi halaman sebelumnya tetap. Lihat `docs/reference/solidcraft/README.md` untuk aset dan regenerasi.
 - Zoom, kaca pembesar, navigasi sentuh/keyboard, dan video yang baru dimuat ketika diputar.
 - Amplop romantis, musik instrumental melalui tombol putar, lilin 3D interaktif, dan penutup tujuh foto berbentuk hati.
-- Three.js dimuat mendekati adegannya. Mode kurangi gerakan dan fallback tanpa WebGL tetap menyediakan konten serta kontrol.
+- Three.js dimuat dinamis. Background berhenti saat tab tersembunyi atau adegan lain aktif. Mode kurangi gerakan dan fallback tanpa WebGL tetap menyediakan konten serta kontrol.
 
 Untuk mencoba hari H sebelum tanggalnya, buka halaman dengan `?preview=birthday`. Setelah membaca surat, pilih **buat satu permohonan** untuk masuk ke lilin dan penutup foto. Preview memakai penanda sesi terpisah dari ulang tahun sebenarnya.
 
