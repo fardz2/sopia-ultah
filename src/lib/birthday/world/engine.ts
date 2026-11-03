@@ -8,6 +8,7 @@ import { createOpeningScene } from './scenes/opening';
 import { createPhotoScene } from './scenes/photos';
 import { createWishScene } from './scenes/wishes';
 import { createWorldBook } from './scenes/book';
+import { createRitualScene } from './scenes/ritual';
 import type { WorldCallbacks,WorldDriver,WorldLayout,WorldSnapshot } from './types';
 
 export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:WorldCallbacks,signal:AbortSignal):Promise<WorldDriver>{
@@ -19,6 +20,7 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
   scene.add(new AmbientLight('#fff7e8',1.4));
   const light=new DirectionalLight('#fff4df',2.2);light.position.set(-3,8,8);scene.add(light);
   let disposed=false,frame=0,lastKey='',rejectInit:((error:unknown)=>void)|undefined;
+  let ritualMode=false,fadeStart=-1000;
   let snapshot:WorldSnapshot|undefined;
   let layout:WorldLayout={width:innerWidth,height:innerHeight,dpr:1,mobile:false,portrait:false,targets:{}};
   const table=createTableScene(resources,signal,invalidate);scene.add(table.root);
@@ -29,9 +31,12 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
     const allowed=canShowChapter(snapshot.unlocked,snapshot.story.chapter);
     const current=allowed?snapshot:{...snapshot,story:{chapter:'teaser' as const,progress:0},ritual:{...snapshot.ritual,open:false}};
     canvas.dataset.chapter=current.story.chapter;
+    canvas.dataset.ritual=current.ritual.open?current.ritual.phase:'closed';
+    if(current.ritual.open!==ritualMode){ritualMode=current.ritual.open;fadeStart=now;}
+    const fade=Math.min(1,(now-fadeStart)/350);canvas.style.opacity=String(fade);
     resolveStoryPose(camera,current,layout);
     table.root.visible=!current.ritual.open;
-    let moving=false;
+    let moving=fade<1;
     for(const part of parts)if(part.apply(current,layout,now)===true)moving=true;
     renderer.render(scene,camera);
     if(moving)invalidate();
@@ -53,7 +58,7 @@ export async function createBirthdayWorld(canvas:HTMLCanvasElement,callbacks:Wor
     rejectInit=undefined;
     if(disposed)throw new DOMException('Disposed','AbortError');
     const ctx={resources,assets:prepared.assets,camera,signal,callbacks,invalidate,fail(){destroy();callbacks.onStatus('failed');}};
-    parts.push(prepared.opening,createPhotoScene(ctx),createWorldBook(ctx),createWishScene(ctx));parts.forEach(part=>scene.add(part.root));callbacks.onStatus('ready');
+    parts.push(prepared.opening,createPhotoScene(ctx),createWorldBook(ctx),createWishScene(ctx),createRitualScene(ctx));parts.forEach(part=>scene.add(part.root));callbacks.onStatus('ready');
   }catch(error){destroy();throw error;}
   return{
     update(value){snapshot=value;const key=JSON.stringify(value);if(key!==lastKey){lastKey=key;if(value.hidden){cancelAnimationFrame(frame);frame=0;}else invalidate();}},

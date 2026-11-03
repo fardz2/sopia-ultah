@@ -13,6 +13,7 @@ try:
  with sync_playwright() as p:
   browser=p.chromium.launch(headless=True);page=browser.new_page(viewport={'width':1440,'height':900});errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
   page.add_init_script("window.__worldDraws=0;for(const key of ['drawElements','drawArrays']){const old=WebGL2RenderingContext.prototype[key];WebGL2RenderingContext.prototype[key]=function(...args){if(this.canvas.id==='birthdayWorldCanvas')window.__worldDraws++;return old.apply(this,args)}}")
+  page.add_init_script("window.__audioCreated=0;const Original=window.AudioContext;window.AudioContext=class extends Original{constructor(...args){super(...args);window.__audioCreated++}}")
   page.set_default_timeout(7000)
   page.goto(f'http://127.0.0.1:{port}/tests/fixtures/world-harness.html',wait_until='networkidle');page.wait_for_selector('[data-world-status="ready"]')
   assert page.locator('canvas').count()==1
@@ -24,6 +25,22 @@ try:
      page.evaluate("([chapter,progress])=>window.__worldSet({unlocked:true,story:{chapter,progress}})",[chapter,progress])
      page.wait_for_function("(chapter)=>document.querySelector('canvas').dataset.chapter===chapter",arg=chapter)
    page.set_viewport_size({'width':768,'height':1024});page.wait_for_load_state('networkidle');page.wait_for_timeout(200)
+  if args.case=='ritual':
+   y=page.evaluate('scrollY');page.locator('#fixtureRitual').click();page.locator('#birthdayUnseal').click()
+   page.wait_for_function("document.querySelector('canvas').dataset.ritual==='opening'")
+   page.keyboard.press('Escape');page.wait_for_function("!document.querySelector('dialog').open");page.wait_for_timeout(450)
+   assert page.evaluate('scrollY')==y
+   assert page.locator('#fixtureRitual').evaluate('(e)=>e===document.activeElement')
+   page.locator('#fixtureRitual').click();page.locator('#birthdayUnseal').click();page.wait_for_selector('#birthdayWish')
+   assert page.evaluate('window.__audioCreated')==0
+   page.locator('#birthdayWish').click();page.locator('#birthdayBlow').click();page.wait_for_timeout(200)
+   page.keyboard.press('Escape');page.wait_for_timeout(1000);assert not page.locator('dialog').evaluate('(e)=>e.open')
+   page.locator('#fixtureRitual').click();page.locator('#birthdayUnseal').click();page.wait_for_selector('#birthdayWish')
+   page.locator('#birthdayMusic').click();assert page.evaluate('window.__audioCreated')==1
+   page.locator('#birthdayWish').click();page.locator('#birthdayBlow').click();page.wait_for_selector('#birthdayCandleNext')
+   page.locator('#birthdayCandleNext').click();page.wait_for_selector('#birthdayFinaleReplay');page.locator('#birthdayFinaleReplay').click();page.wait_for_timeout(2000)
+   assert page.locator('canvas').count()==1
+   page.keyboard.press('Escape');page.wait_for_timeout(500)
   if args.case=='book':
    page.evaluate("()=>window.__worldSet({unlocked:true,story:{chapter:'book',progress:1}})")
    page.wait_for_selector('#sbRight');page.locator('#sbRight').click();page.locator('#sbRight').click()

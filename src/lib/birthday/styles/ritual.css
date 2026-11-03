@@ -2,6 +2,17 @@
 .birthday-finale {
   text-align: center;
 }
+.birthday-greeting.world-ritual{width:100%;height:100svh;max-width:none;max-height:none;inset:0;margin:0;padding:24px 32px;border:0;background:transparent;scrollbar-gutter:stable}
+.world-ritual::backdrop{background:rgba(236,231,220,.06)}
+.world-ritual .birthday-letter{max-width:760px;margin:auto}
+.world-ritual .birthday-letter-head{background:#ece7dc;padding:4px 12px}
+.world-ritual .birthday-envelope>span{visibility:hidden}
+.world-ritual .birthday-envelope-scene h2{margin-top:28px}
+.world-ritual .birthday-envelope{width:min(80%,380px);aspect-ratio:1.35;margin:20px auto}
+.world-ritual[data-phase='letter'] .birthday-letter{max-width:1100px}
+.world-ritual .birthday-letter-content{max-width:640px;box-sizing:border-box;padding:32px;margin-left:auto;background:#f5f0e5;border:1px solid #c8baa4}
+.world-ritual .wish-candle-stage{background:transparent}
+@media(max-width:640px){.birthday-greeting.world-ritual{padding:16px 18px}.world-ritual .birthday-letter-content{padding:24px 20px}.world-ritual .birthday-letter-date{font-size:10px}.world-ritual .birthday-envelope{margin:24px auto}.world-ritual .birthday-preview{padding:4px 12px;background:#ece7dc}.world-ritual .finale-heart{width:min(100%,340px)}}
 .wish-ritual:focus,
 .birthday-finale:focus {
   outline: none;

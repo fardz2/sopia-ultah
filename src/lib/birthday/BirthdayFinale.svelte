@@ -4,9 +4,11 @@
   import { photoGather, inkReveal } from './textMotion';
   let {
     reduced = false,
+    world = false,
+    onreplay,
     onback,
     onbook,
-  }: { reduced?: boolean; onback: () => void; onbook: () => void } = $props();
+  }: { reduced?: boolean; world?: boolean; onreplay?:()=>void; onback: () => void; onbook: () => void } = $props();
   let panel: HTMLElement;
   let ready = $state(false),
     replay = $state(0);
@@ -37,7 +39,8 @@
   <h2 id="birthdayFinaleTitle">sepotong waktu.<br /><em>sepenuh hati.</em></h2>
   <p class="finale-dedication">aku sayang kamu, sopia.</p>
   {#if ready}{#key replay}
-      <div class="finale-heart" aria-label="Tujuh foto membentuk hati">
+      <div class="finale-heart" data-world-target="finale" aria-label="Tujuh foto membentuk hati">
+        {#if !world}
         <svg class="finale-heart-line" viewBox="0 0 100 100" aria-hidden="true"
           ><path
             d="M50 88C36 76 9 58 9 35C9 12 37 8 50 27C63 8 91 12 91 35C91 58 64 76 50 88Z"
@@ -58,6 +61,7 @@
             style:transform="translate(-50%,-50%) rotate({places[i][2]}deg)"
             in:photoGather|global={{ index: i, reduced }}
           />{/each}
+        {/if}
       </div>
       <p class="finale-signature">
         <span>dengan seluruh sayangku,</span><strong in:inkReveal|global={{ reduced }}>Faridz</strong><span
@@ -74,7 +78,7 @@
     >
     <button class="birthday-control" type="button" onclick={onback}>kembali ke surat</button>
   </div>
-  <button id="birthdayFinaleReplay" class="finale-replay" type="button" onclick={() => replay++}
+  <button id="birthdayFinaleReplay" class="finale-replay" type="button" onclick={() => {replay++;onreplay?.();}}
     >lihat sekali lagi</button
   >
 </section>
