@@ -28,7 +28,7 @@ Sopia dan orang yang membagikan hadiah ulang tahun ini, melalui desktop atau pon
 - Sepuluh ucapan berbeda pada halaman kiri buku; teks ikut melengkung saat halaman dibalik dan dapat diperbesar dengan kaca pembesar.
 - Pembuka singkat dengan nama turun per huruf dan potret tersingkap seperti menarik lembar kertas. Tidak menghalangi akses halaman.
 - Galeri foto berlapis dalam ruang 3D dan buku Three.js yang terbuka mengikuti scroll, lalu menyatu dengan buku Svelte interaktif. Tombol langsung buka buku tersedia.
-- Kamera mengikuti jalur di antara foto, dengan lengkungan di tepi kertas dan daun lama yang membingkai sudut layar. Jalur ponsel memakai gerak lebih kecil; mode kurangi gerakan memakai galeri statis.
+- Kamera mengikuti jalur di antara foto yang datar dan lurus, dengan daun lama membingkai sudut layar. Efek bengkok pada foto dihapus sesuai koreksi pengguna. Jalur ponsel memakai gerak lebih kecil; mode kurangi gerakan memakai galeri statis.
 - Segel F/S pada sampul dimodelkan melalui SolidCraft dan ikut bergerak bersama engsel. Buku tetap terbuka jika aset dekoratif ini gagal dimuat.
 - Background meja hadiah krem memakai kotak berpita, amplop bersegel F/S, dan daun di tepi layar. Kamera background mengikuti scroll sedikit; layout, buku, galeri, dan transisi surat tetap seperti sebelumnya. Pilihan ini menggantikan rencana seluruh pengalaman 3D, sesuai koreksi pengguna pada 3 November 2026.
 - Three.js dimuat dinamis. Background dibatasi 30fps, berhenti saat tab tersembunyi atau galeri/dialog sedang aktif, dan membatasi DPR ke 1 pada ponsel. Tanpa WebGL2 atau dalam mode kurangi gerakan, latar statis, galeri dan buku native tetap bisa dipakai.

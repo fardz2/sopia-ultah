@@ -1,18 +1,17 @@
 import {
-  CatmullRomCurve3, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3,
+  CatmullRomCurve3, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, Vector3,
 } from 'three';
 import type { PerspectiveCamera, Scene } from 'three';
 import { Resources } from './resources';
 import { range, smooth, type CinemaPhoto, type Composition } from './types';
-import { createPaper } from './paperGeometry';
 import { buildGardenForeground } from './gardenForeground';
 
 const positions = [
-  [2.1, 0, 0, -0.055],
-  [-1.5, 0.35, -5, 0.065],
-  [1.8, -0.1, -10, -0.045],
-  [-1.6, 0.2, -15, 0.055],
-  [1.4, -0.1, -20, -0.045],
+  [2.1, 0, 0],
+  [-1.5, 0.35, -5],
+  [1.8, -0.1, -10],
+  [-1.6, 0.2, -15],
+  [1.4, -0.1, -20],
 ];
 
 export async function buildGallery(
@@ -34,18 +33,19 @@ export async function buildGallery(
     const height = i === 0 ? 3.2 : 2.8;
     const image = texture.image as HTMLImageElement;
     const width = height * image.naturalWidth / image.naturalHeight;
-    const board = createPaper(resources, width + 0.16, height + 0.2);
-    const print = createPaper(resources, width, height, true);
+    // Keep the photograph and border flat; motion comes from the camera.
+    const board = resources.geometry(new PlaneGeometry(width + 0.16, height + 0.2));
+    const print = resources.geometry(new PlaneGeometry(width, height));
     const backing = resources.material(boardMaterial.clone());
     const photograph = resources.material(new MeshBasicMaterial({
-      map: texture, vertexColors: true, side: DoubleSide, transparent: true,
+      map: texture, side: DoubleSide, transparent: true,
     }));
-    picture.add(new Mesh(board.geometry, backing));
-    const face = new Mesh(print.geometry, photograph);
+    picture.add(new Mesh(board, backing));
+    const face = new Mesh(print, photograph);
     face.position.z = 0.018;
     picture.add(face);
     scene.add(picture);
-    return { picture, board, print, backing, photograph };
+    return { picture, backing, photograph };
   });
   const cameraPath = new CatmullRomCurve3([
     new Vector3(0, 0.12, 11),
@@ -78,18 +78,12 @@ export async function buildGallery(
       const openingDrop = compact ? (1 - smooth(range(progress, 0, 0.18))) * 0.8 : 0;
       const nearStart = compact ? 4.5 : 0.85;
       const nearEnd = compact ? 6.6 : 3;
-      frames.forEach(({ picture, board, print, backing, photograph }, i) => {
-        const [x, y, z, angle] = positions[i];
+      frames.forEach(({ picture, backing, photograph }, i) => {
+        const [x, y, z] = positions[i];
         const distance = point.z - z;
         picture.visible = distance > nearStart;
         if (!picture.visible) return;
         picture.position.set(x * (compact ? 0.38 : 1), y - openingDrop, z);
-        const focus = 1 - Math.min(1, Math.abs(distance - 7.5) / 9);
-        const curl = (compact ? 0.1 : 0.17) + focus * (compact ? 0.08 : 0.14);
-        const direction = Math.sin(progress * Math.PI * 2 + i * 0.8);
-        board.bend(curl, direction);
-        print.bend(curl, direction);
-        picture.rotation.set(0.025 * (i - 2), (i % 2 ? -1 : 1) * 0.1 * (1 - focus * 0.6), angle * (1 - focus * 0.5));
         backing.opacity = photograph.opacity = smooth(range(distance, nearStart, nearEnd));
       });
       garden?.update(progress, compact);
